@@ -1,11 +1,7 @@
 \documentclass{article}
 \usepackage[utf8]{inputenc}
 \usepackage{fullpage}
-\usepackage[
-backend=biber,
-style=apa,
-backref=true
-]{biblatex}
+\usepackage[backend=biber,style=apa,backref=true]{biblatex}
 \usepackage{listings}
 \lstset{language=tex}
 \usepackage{url}
@@ -23,36 +19,42 @@ backref=true
 \author{George Tyler}
 \date{\today}
 
-\addbibresource{../diss.bib}
+\addbibresource{diss.bib}
 \begin{document}
 
 \title{Misinformation and Social Distancing: \\ Evidence from 762 Million Tweets}
 
 \maketitle
-
-%\abstract{This is a writing sample to be submitted to Economics Masters programmes. The goals of the writing sample are to demonstrate proficiency in econometrics, an excellent knowledge of the current literature, etc. I demonstrate proficiency in econometrics by a good discussion and justification of the Bayesian method. That is, I justify using the Imperial College model rather than a Maximum Likelihood procedure, etc, and put the Bayesian approach into context.}
+%This is a writing sample to be submitted to Economics Masters programmes. The writing sample will be assessed for a comprehensive understanding of the subject area; understanding of problems in the area; ability to construct and defend an argument; powers of analysis; and powers of expression. I should display the word count on the document. 
+\abstract{This is a 2000-word excerpt from my dissertation on the impact of misinformation on the spread of COVID-19 in the USA. I introduce the research design, conduct a literature review, and present descriptive statistics on a portion of the dataset.}
 
 \section{Introduction}
-The early stages of the COVID-19 pandemic saw a rapid and significant shift in economic incentives for those in countries where the virus had spread. The quality of information on the pandemic was key to determining the early response to the various non-pharmaceutical interventions (NPIs) put in place; I study the role of varying levels of information quality circulated on social media. Over the last decade, consumption of news has shifted from traditional sources of media to the online sphere, and, accordingly, the market for news has become more fragmented. A degree of polarisation on both ends of the political spectrum has occurred, and with it a certain level of online misinformation. The typical consumption pattern for misinformation is through social media, particularly Twitter and Facebook (in the English-speaking world). Using inferred and explicit geolocation data, I study the extent to which greater misinformation spread influences compliance with NPIs via the SafeGraph metric of social distancing.
-
-%The COVID-19 pandemic has had an enormous impact on the economic lives of everyone in the US, both from health costs and widespread stay-at-home orders. Business closures and social distancing mandates have also substantially changed behaviour when not locked down. Until a suitable vaccine is developed, non-pharmaceutical interventions (NPIs) will remain a substantial policy problem. There are a vast number of pertinent questions that accompany implementing NPIs. At what stage of infection should a government restrict economic activity? How effective are intermediate measures, and at what point should they be converted to a full lockdown? What causes effective adherence to intermediate interventions? How much do they cost, and does this cost vary across regions? If so, what determines this difference?
-
+The early stages of the COVID-19 pandemic saw an unprecedented shift in behaviour for most citizens of the United States. In a short period of time, a large number changed their habits of working, socialising, and travelling. They did so both as a result of government restriction and as a private response to the spread of the pandemic. Economists have taken interest in how citizens formed these behaviour changes; it has been shown that people largely pre-empted government restrictions and acted as a result of their own assessment of the unfolding pandemic. A key factor in how citizens changed (or failed to change) their behaviour, then, is the source and quality of the information they received. It is plausible that those who consumed more accurate information\footnote{And also more cautious information; in this case the two are largely correlated, which is investigated in the full paper.} acted earlier, and were more likely to comply with the government restrictions when they came into place. 
+%Another key determinant of the.
 
 
-In this dissertation, I study multiple aspects of this policy problem. First, I consider the impact of weather on the effectiveness of intermediate measures. Weather affects transmission directly by affecting the half-life on surfaces and airborne transmission, but also indirectly, as a proxy for socialising outdoors and other similar activities. This works on a day-to-day channel and as a historical characteristic. Historical temperatures point to norms of summer activities: areas with very hot summers may socialise more indoors than temperate areas. Conversely, daily temperature and humidity impact indoors vs. outdoors mobility and physical transmission itself. The interaction of good weather with intermediate NPI measures presents a tradeoff, particularly to younger age groups. 
 
-Using a difference-in-differences framework, I test to see if the variation in social distancing is explained by daily weather conditions. I also test to see if historical weather conditions, alongside commuting norms and neighbourhood norms, explain variation in mobility patterns. Off the back of these results, I include a weather metric in an epidemiological model.
 
-Second, I examine the role of regional factors on NPI effectiveness. Using spatial techniques, I study the impact of population density, housing mode, and job position on effectiveness of NPIs. I aim at a first step to replicate the results of \cite{almagroRacialDisparitiesFrontline2020}\footnote{``COVID disparities stem from patterns of commuting and housing crowding''}. The authors establish an initial effect from commuting to essential work, and after a lockdown, an effect from crowding in housing. I aim to build on this analysis by controlling for commuting (with SafeGraph data) and examining a causal effect of housing modality.\textbf{\textit{Next Step:} Think about and set out a research design for this experiment. I'm thinking something along the lines of studying people that move house?}
- %I exploit the variation in timing and duration of stay-at-home orders to infer a causal effect of lockdown.
+% The early stages of the COVID-19 pandemic saw a rapid and significant shift in economic incentives for those in countries where the virus had spread. The quality of information on the pandemic was key to determining the early response to the various non-pharmaceutical interventions (NPIs) put in place; I study the role of varying levels of information quality circulated on social media. Over the last decade, consumption of news has shifted from traditional sources of media to the online sphere, and, accordingly, the market for news has become more fragmented. A degree of polarisation on both ends of the political spectrum has occurred, and with it a certain level of online misinformation. The typical consumption pattern for misinformation is through social media, particularly Twitter and Facebook (in the English-speaking world). Using inferred and explicit geolocation data, I study the extent to which greater misinformation spread influences compliance with NPIs via the SafeGraph metric of social distancing.
+
+% %The COVID-19 pandemic has had an enormous impact on the economic lives of everyone in the US, both from health costs and widespread stay-at-home orders. Business closures and social distancing mandates have also substantially changed behaviour when not locked down. Until a suitable vaccine is developed, non-pharmaceutical interventions (NPIs) will remain a substantial policy problem. There are a vast number of pertinent questions that accompany implementing NPIs. At what stage of infection should a government restrict economic activity? How effective are intermediate measures, and at what point should they be converted to a full lockdown? What causes effective adherence to intermediate interventions? How much do they cost, and does this cost vary across regions? If so, what determines this difference?
+
+
+
+% In this dissertation, I study multiple aspects of this policy problem. First, I consider the impact of weather on the effectiveness of intermediate measures. Weather affects transmission directly by affecting the half-life on surfaces and airborne transmission, but also indirectly, as a proxy for socialising outdoors and other similar activities. This works on a day-to-day channel and as a historical characteristic. Historical temperatures point to norms of summer activities: areas with very hot summers may socialise more indoors than temperate areas. Conversely, daily temperature and humidity impact indoors vs. outdoors mobility and physical transmission itself. The interaction of good weather with intermediate NPI measures presents a tradeoff, particularly to younger age groups. 
+
+% Using a difference-in-differences framework, I test to see if the variation in social distancing is explained by daily weather conditions. I also test to see if historical weather conditions, alongside commuting norms and neighbourhood norms, explain variation in mobility patterns. Off the back of these results, I include a weather metric in an epidemiological model.
+
+% Second, I examine the role of regional factors on NPI effectiveness. Using spatial techniques, I study the impact of population density, housing mode, and job position on effectiveness of NPIs. I aim at a first step to replicate the results of \cite{almagroRacialDisparitiesFrontline2020}\footnote{``COVID disparities stem from patterns of commuting and housing crowding''}. The authors establish an initial effect from commuting to essential work, and after a lockdown, an effect from crowding in housing. I aim to build on this analysis by controlling for commuting (with SafeGraph data) and examining a causal effect of housing modality.\textbf{\textit{Next Step:} Think about and set out a research design for this experiment. I'm thinking something along the lines of studying people that move house?}
+%  %I exploit the variation in timing and duration of stay-at-home orders to infer a causal effect of lockdown.
  
-Third, I use the Imperial College COVID-19 model to estimate latent infection levels, and to simulate counterfactual deaths. I trace the economic cost against the benefit of counterfactual lives saved and infections avoided, and test the robustness of my results against alternative value of statistical life (VSL) specifications. I address \textcite{pindyckCOVID19WelfareEffects2020}'s criticism of using VSLs to measure health policy costs.
-\section{Data}
+% Third, I use the Imperial College COVID-19 model to estimate latent infection levels, and to simulate counterfactual deaths. I trace the economic cost against the benefit of counterfactual lives saved and infections avoided, and test the robustness of my results against alternative value of statistical life (VSL) specifications. I address \textcite{pindyckCOVID19WelfareEffects2020}'s criticism of using VSLs to measure health policy costs.
+% \section{Data}
 
-\section{Methods}
-I use a hierarchical Bayesian epidemiological model to estimate latent infections. Broadly, the economics literature has preferred to use variants of the Susceptible-Infected-Recovered (SIR) model to estimate epidemiological parameters with Maximum Likelihood, rather than take a `structural equations' Bayesian approach. A common criticism of the Bayesian approach is that it fails to take behavioural concerns into account. In the context of a benefit-cost analysis, I now show that it is possible to apply behavioural tradeoffs to the model while retaining the benefits of the hierarchical model -- namely the . 
+% \section{Methods}
+% I use a hierarchical Bayesian epidemiological model to estimate latent infections. Broadly, the economics literature has preferred to use variants of the Susceptible-Infected-Recovered (SIR) model to estimate epidemiological parameters with Maximum Likelihood, rather than take a `structural equations' Bayesian approach. A common criticism of the Bayesian approach is that it fails to take behavioural concerns into account. In the context of a benefit-cost analysis, I now show that it is possible to apply behavioural tradeoffs to the model while retaining the benefits of the hierarchical model -- namely the . 
 
-\section{Results}
+% \section{Results}
 
 \wordcount
 \printbibliography
