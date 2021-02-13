@@ -98,8 +98,14 @@ Twitter's terms of service restrict the large-scale sharing of Tweet datasets; h
 
 \section{Text analysis: an overview}\label{textan}
 \textit{Section summarises Gentzkow et al, Text As Data (JEL, 2019)}
-\subsection{Inference under high dimensionality}
-\subsection{Pre-processing: stopwords, tf-idf, n-grams}
+In the literature review I summarised the current uses of Text Analysis in the economic literature. In this section, I present a detailed look at the inference problem and the various types of approaches possible to tackle it.
+\subsection{The inference problem}
+For economists, the fundamental concept is that relevant information exists within a corpus of text. This information can be represented as a low-dimensional variable, relevant to a model of economic decisionmaking: for example, interest rate expectations or risk aversion. However, this low-dimensional variable is expressed in text -- a noisy, extremely high-dimensional format. A list of documents which are \(n\) words long, drawn from a vocabulary of size \(p\), has a dimension of \(p^n\). The central challenge is to isolate the latent variable from the high-dimensional noise in a robust manner.  \textcite{gentzkowTextData2019} present a useful notation for a two-step process of this extraction: first, the raw text \(\mathcal{D}\) is mapped to an array of tokens, \(\mathbf{C}\). These tokens -- usually in the form of words,phrases, or sentences -- are the fundamental units of analysis. Second, the token array is mapped to the outcome array \(\hat{\mathbf{V}} \), which is an estimate of the latent variable \(\mathbf{V}\). \(\hat{\mathbf{V}} \) is then used in the final analysis. In these two mappings, there are two challenges: first, to include only the relevant tokens in \(\mathbf{C}\); second, to accurately estimate  \(\mathbf{V} \) using \(\mathbf{C}\). 
+
+\subsection{Mapping \(\mathcal{D}\) to \(\mathbf{C}\): text pre-processing}
+Within 
+
+stopwords, tf-idf, n-grams
 \subsection{Dictionary-based methods}
 \subsection{Text regression techniques}
 \subsection{Latent Dirichlet Allocation}
