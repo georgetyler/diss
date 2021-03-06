@@ -106,9 +106,43 @@ The argument of the dissertation rests on the following assumptions: first, that
 \textit{General; description of previous uses of geolocation data}
 \subsection{COVID-19: Empirical estimates of drivers of social distancing behaviour}
 \textit{Summary of empirical research on COVID}
-\subsection{COVID-19: Economic Models}
+\subsection{COVID-19: Models of risk perception and social distancing}
 \textit{Discussion of different augmentations to SIR models; incorporation of endogenised social distancing / individual choice. Particular focus on risk-attitude heterogeneity.}
+At the outbreak of the pandemic, many economists augmented the standard epidemiological `Susceptible-Infected-Recovered' (SIR) models with economics-derived models of human behaviour. \textcite{murrayEpidemiologyTimeNeed2020}, writing as an epidemiologist, identifies 
+\subsubsection{Standard SIR model}
+\textcite{kermackContributionMathematicalTheory1927} introduced the SIR model and it remains the basis for most modern epidemiological models; this explanation follows \textcite{averyEconomistGuideEpidemiology2020}. Each member of the population can be in one of three `Susceptible, Infected, Recovered' states; therefore, at each time period we have
 
+\begin{equation}\label{SIRstates}
+    S(t) + I(t) + R(t) = 1
+\end{equation}
+, where the population is normalized to 1. A susceptible individual can only move to the infected state through contact with an infected individual, and an infected individual can only move to the recovered state. The recovered state, in the base version, includes \textit{both} those who have recovered and those who have died: they share the key characteristics of being noninfectious and not susceptible to future infection. Three key parameters govern the rate of transitions between these states: \(\gamma\), the recovery rate, represents the probability per unit time for an individual to move from Infected to Recovered; \(R_0\), the basic reproductive number, is the ``number of people an infectious person would infect over the course of their disease in a fully susceptible population'' \parencite[81]{averyEconomistGuideEpidemiology2020}. \(R_0\) therefore stands in an inverse relationship with the recovery rate: \(R_0 = \beta / \gamma\), where \(\beta\) is the expected number of contacts an individual makes per unit time in normal circumstances. Assuming that the individual infects every contact, the states evolve according to 
+
+\begin{align}
+    \dot{S}(t)&= -S(t)I(t)R_0 \gamma \\
+    \dot{I}(t)&= S(t)I(t)R_0 \gamma - \gamma I(t) \\
+    \dot{R}(t)&= \gamma I(t)
+\end{align}
+. For epidemiologists, then, \(R_0\) is seen as a `compound parameter' of both the virus' natural infectivity\footnote{Which itself is governed by the expected length of contagiousness \(\frac{1}{\gamma}\) and the transmissibility, which we assume to be 1.} and the expected number of in-person interactions during pre-pandemic life \parencite[84]{averyEconomistGuideEpidemiology2020}: government policies and behaviour change therefore have the effect of reducing the \(R_0\) parameter to some variable \(R^t_0\). This gives rise to the key aim of `flattening the curve': achieving a state where -- given the current susceptible fraction of the population -- the expected number of people that a contagious individual infects over the course of their illness is below 1:
+\begin{equation}
+    R_t \equiv R^t_0 S(t) < 1
+\end{equation}. \(R_t\) is known as the effective reproductive number.
+
+\textcite{averyEconomistGuideEpidemiology2020} sorts the contributions of economic research to the basic SIR model into three basic categories: pointing out the endogeneity of the reproductive number, adapting the model to heterogeneity of different subpopulations, and adapting SIR models to policy-relevant issues like social distancing compliance. I now set out the insights that model-based COVID economic research gives to the topic in this dissertation: the relationship between risk preferences, local demographic characteristics, and social distancing behaviour.
+
+
+\subsubsection{Models of endogenous social distancing}
+In the base SIR model, \(R^t_0\) is endogenous, since individuals adjust their exposure to others in response to the state of the epidemic. A priority for this dissertation is to establish the characteristics and determinants of social distancing; a large body of literature has emerged in economics discussing this issue. 
+
+\textcite{toxvaerdEquilibriumSocialDistancing2020} models individuals as making non-cooperative, forward-looking decisions to engage in costly social distancing by solving a tradeoff against beneficial social behaviour and the risk of infection. Toxvaerd finds that equilibrium social distancing depends on the threshold infection probability, which is determined by the aggregate disease prevalence; this entails that individuals react to higher prevalence by distancing more, mitigating the flow rate between \(S(t)\) and \(I(t)\). In this model, individuals assess the value of becoming infected as equal to the expected discounted lifetime utility of being in the infected state. The model considers a homogenous population and so does not take demographics into account.
+
+\textcite{farboodiInternalExternalEffects2020} also models the tradeoff of exposure against health risks. Using the SafeGraph dataset, they find that social activity levels fall before imposition of mandatory measures. This yields their key observation: desire to avoid illness is a key determinant of social distancing, meaning that there is a strong laissez-faire reduction in social activity. This cost-response reduction produces the majority of social distancing behaviour, but not enough for optimal pathogen suppression; as such, social distancing orders are recommended. They implement quadratic matching with random search, introduced in \textcite{diamondEquilibriumAnalysisSearch1979}, to model social interactions. Individuals are split into the S, I, R states, where the level of chosen social activity is the same among all individuals in that state. Disease transmission is therefore a function of \(\beta\), the number in the susceptible and infectious states, and the social activity level of each of those states. Individuals choose their level of social activity, taking the external social activity level and the number of infected as a given. The model, however, abstracts from subpopulation heterogeneity.
+
+\textcite{eichenbaumMacroeconomicsEpidemics2020} also point out that exposure comes either from purchasing consumption goods, from working, and from random interactions such as touching surfaces: this shows the importance of income and mode of work for disease transmission. 
+
+\textcite{goolsbeeFearLockdownDiversion2021} 
+\subsubsection{Subpopulation heterogeneity}
+
+\subsubsection{Endogenous social distancing and policy models}
 
 \section{Text analysis: an overview}\label{textan}
 In the literature review I summarised the current uses of Text Analysis in the economic literature. In this section, I present a detailed look at the inference problem for text analysis of English documents, and the various types of approaches possible to tackle it. The section introduces concepts that are used in the later Methods section, and also serves as an introduction to the field of text analysis for economics.
@@ -171,7 +205,7 @@ Twitter's terms of service restrict the large-scale sharing of Tweet datasets; h
 GeoCoV19 was made available as a dehydrated dataset, containing the tweet identifiers and the inferrred geolocation information. The tweets were rehydrated in December 2020 using Hydrator, an open-source tool made available for academic research by the digital archive organisation Documenting the Now \parencite{summersHydrator2020}. Each tweet is delivered in the Javascript Object Notation (JSON) format: this is a common file standard used to deliver arbitrarily nested data. Each entry contains a `tree', which corresponds to a key-value pair. Each value can itself contain a list of named objects; so, unlike a CSV file, the data is not a `flat' table. An example from the Developer documentation is reproduced below: note the nesting and the metadata delivered with the tweet text. The final dataset contained 63,654,120 tweets and measured approximately 207 GB.
 
 \begin{singlespace}
-\begin{lstlisting}[language=json,firstnumber=1,caption=Example Tweet object JSON file \parencite{twitterinc.DataDictionaryStandard2021}]
+\begin{lstlisting}[language=json,numbers=none,caption=Example Tweet object JSON file \parencite{twitterinc.DataDictionaryStandard2021}]
 {
   "created_at": "Thu Apr 06 15:24:15 +0000 2017",
   "id_str": "850006245121695744",
@@ -224,7 +258,8 @@ Sentiment analysis is the task of inferring the author's opinion of a subject fr
 \subsubsection{\texttt{szuyhet} R package and workflow}
 \subsubsection{The VADER package}
 
-\subsection{Econometric Approach}
+\subsection{Empirical model}
+Given this county-level measure of tweet sentiment, we now incorporate it into an empirical model of social distancing.
 \subsubsection{Inference with Panel Fixed Effects}
 \subsubsection{Specifications and hypotheses}
 
