@@ -401,21 +401,27 @@ The third, fourth, and fifth coefficients cover time-varying factors like the im
 
 
 
-\subsubsection{Covariates: Sentiment measures}
-We have estimated two measures of tweet sentiment. Both of the measures estimate the sentiment of individual tweets, \(\hat{\mathbf{V}}\), from the raw text \(\mathbf{C}\). For the NRC lexicon, this is a binary measure: `tweet contains fear-related words' is true or false. For each county in each day, a proportion of the tweets contain fear-related words. This proportion is the reported variable. Similarly, the VADER measure is a bounded index over \([-1,1]\), but does not arise directly from count data. 
-
-
-
-
+\subsubsection{Variables}
+We have estimated two measures of tweet sentiment. Both of the measures estimate the sentiment of individual tweets, \(\hat{\mathbf{V}}\), from the raw text \(\mathbf{C}\). For the NRC lexicon, this is a binary measure: `tweet contains fear-related words' is true or false. For each county in each day, a proportion of the tweets contain fear-related words. This proportion is the reported variable. Similarly, the VADER measure is a bounded index over \([-1,1]\), but does not arise directly from count data. The mean of this measure is taken over each county and day, which forms the aggregation procedure. AtHome is an indicator variable for whether the state had imposed a stay-at-home order; and NatStringency reports the the Oxford stringency index, which is normalised to between 0 and 100. Finally, the deaths in each county are included as a time-varying factor; as discussed above, these offer a less biased estimate of the spread of the virus than reported cases, which vary by region and do not include asymptomatic cases. The dependent variables are two mobility measures: the median time spent at home during working hours (expressed as a percentage), and the proportion of measured devices that stay at home all day.
 
 \subsection{Inference with Panel Fixed Effects}
+The chosen model is a two-way, time and location fixed effects design. This empirical model is very common with a panel dataset measured at the county level, as the location fixed effect flexibly controls for all unobserved, time-invariant factors in each county. Moreover, the time fixed effect accounts for time-varying factors that are common to all counties -- like the progression of the virus on the world stage, and the level of `shared' sentiment towards COVID across the U.S. 
 
+The fixed effects model is characterised by the linear model  
+\begin{equation}
+  E[Y_{it} | A_i , X_{it}, t] = \alpha + \lambda_t + A^\prime_i \gamma + X^\prime_{it} \beta + \rho D_{it}
+\end{equation}
+, where \(Y_{it}\) is the outcome, \(\alpha\) the intercept, \(\lambda_t\) the time effect, \(A^\prime_i \gamma\) unobserved, fixed confounders, \(X^\prime_{it} \beta\) observed time-varying confounders, and \(\rho D_{it}\) the variable of interest \parencite[222]{angristMostlyHarmlessEconometrics2009}. The assumptions are that the effect of \(\rho\) is additive and constant, and that the unobserved fixed effects do not vary with time\footnote{That is, the omission of a time subscript on \(A^\prime_i \gamma\) is accurate.}. In our case, both assumptions are plausible. This directly implies the model 
+\begin{align}
+  Y_{it} &= \alpha_i + \lambda_t + \rho D_{it} + X^\prime_{it} \beta + \epsilon_{it}, \textrm{, where} \\
+  \alpha_i &\equiv \alpha + A_i^\prime \gamma
+\end{align}. In this way we estimate the (potentially large number of ) unobserved confounders as the \textit{fixed effect} \(\alpha_i\), which enters into the model as a coefficient on an indicator for each region, and also include a \textit{time effect} \(\lambda_t\). With these effects meted out, we are able to obtain a consistent estimator for the overall, shared effect of our variable of interest, under the assumption that the time-varying confounders are adequately specified. %Maybe comment on measurement error here, too.
 
 
 
 \section{Results}%1000 words
 \subsection{Main Specification}
-The basic message of the main specification can be seen in figure \ref{setsplit} in appendix \ref{add-figs}, which shows that counties with a fear sentiment above the median value have 3 percentage points more devices staying at home. Below is the regression table for the main specification as in equation \ref{eq:mainspec}, which uses the NRC-derived proportion of fearful tweets as the sentiment measure. The two dependent 
+The basic message of the main specification can be seen in figure \ref{setsplit} in appendix \ref{add-figs}, which shows that counties with a fear sentiment above the median value have 3 percentage points more devices staying at home. Below is the regression table for the main specification as in equation \ref{eq:mainspec}, which uses the NRC-derived proportion of fearful tweets as the sentiment measure. The two dependent variables are 
 
 \begin{singlespace}
 \centering
@@ -482,6 +488,46 @@ On visual inspection of figure \ref{popvsmobil}, a positive relationship does ex
 \newpage
 
 \appendix 
+\section{Regression Tables}
+\begin{landscape}
+  
+
+\begin{table}
+\centering
+\caption{Retweets MainSpecs}
+\begin{tabular}{lcccccc}
+  \tabularnewline\midrule\midrule
+  Dependent Variables:&home\_count&median\_pct\_time\_home&home\_prop&home\_count&median\_pct\_time\_home&home\_prop\\
+  Model:&(1) & (2) & (3) & (4) & (5) & (6)\\
+  \midrule \emph{Variables}&   &   &   &   &   &  \\
+  meanfear&984.8$^{**}$ & 2,637.5$^{***}$ & 0.0088$^{*}$ &    &    &   \\
+    &(357.5) & (795.0) & (0.0050) &    &    &   \\
+  at\_home\_orderTRUE&704.2$^{**}$ & 1,027.8$^{**}$ & 0.0295$^{***}$ & 705.7$^{**}$ & 1,027.7$^{**}$ & 0.0294$^{***}$\\
+    &(267.5) & (394.6) & (0.0039) & (267.5) & (395.0) & (0.0039)\\
+  NAT\_StringencyIndex&106.6$^{***}$ & 157.0$^{***}$ & 0.0030$^{***}$ & 107.1$^{***}$ & 159.7$^{***}$ & 0.0031$^{***}$\\
+    &(10.68) & (32.68) & (0.0003) & (10.89) & (32.95) & (0.0003)\\
+  death&-11.84$^{**}$ & -19.56$^{**}$ & $-6.61\times 10^{-5}$$^{**}$ & -11.84$^{**}$ & -19.56$^{**}$ & $-6.6\times 10^{-5}$$^{**}$\\
+    &(4.757) & (8.729) & ($2.34\times 10^{-5}$) & (4.760) & (8.745) & ($2.34\times 10^{-5}$)\\
+  confirmed&1.244$^{***}$ & 2.105$^{**}$ & $8.17\times 10^{-6}$$^{***}$ & 1.243$^{***}$ & 2.104$^{**}$ & $8.17\times 10^{-6}$$^{***}$\\
+    &(0.4063) & (0.7757) & ($2.25\times 10^{-6}$) & (0.4067) & (0.7775) & ($2.25\times 10^{-6}$)\\
+  meanneg&   &    &    & 909.7 & 6,199.0 & 0.0603\\
+    &   &    &    & (2,446.3) & (4,331.9) & (0.0345)\\
+  \midrule \emph{Fixed-effects}&   &   &   &   &   &  \\
+  week & Yes & Yes & Yes & Yes & Yes & Yes\\
+  FIPS & Yes & Yes & Yes & Yes & Yes & Yes\\
+  \midrule \emph{Fit statistics}&  & & & & & \\
+  Observations & 16,474&16,474&16,474&16,474&16,474&16,474\\
+  Log-Likelihood & -156,190.6&-161,812.5&31,715.0&-156,194.2&-161,821.8&31,719.5\\
+  BIC & 318,352.5&329,596.4&-57,458.7&318,359.8&329,615.0&-57,467.7\\
+  RMSE & 3,171.9&4,462.0&0.03529&3,172.6&4,464.6&0.03528\\
+  Size of the 'effective' sample & 16,474&16,474&16,474&16,474&16,474&16,474\\
+  F-test & 452.59&1,983.2&160.71&452.38&1,980.9&160.81\\
+  F-test (projected) & 542.16&791.18&710.59&540.51&786.71&712.73\\
+  \midrule\midrule\multicolumn{7}{l}{\emph{Two-way (week \& FIPS) standard-errors in parentheses}}\\
+  \multicolumn{7}{l}{\emph{Signif. Codes: ***: 0.01, **: 0.05, *: 0.1}}\\
+  \end{tabular}
+\end{table}
+\end{landscape}
 \section{Additional Figures} \label{add-figs}
 \begin{figure}[h!]
   \includegraphics[width=0.8\textwidth]{figs/n30_hist.png}    
