@@ -320,6 +320,7 @@ Following the download from the Twitter API, the text content and UID of each tw
 
 The first cleaning step is to remove links and username mentions from the text, and remove any tweets which are blank. Stop-word removal was not necessary, since the lexicon only matches sentiment-laden terms. Next, the \texttt{sentimentR} package \parencite{rinkerSentimentr2018} is used to split the text into sentences, as we compute the sentiment at the sentence level. Next, the text is split into its constituent tokens using the \texttt{tidytext} package \parencite{silgeTextMiningTidy2017}. The resulting document term matrix is then matched against the NRC lexicon and aggregated at the sentence level; we therefore obtain a binary factor variable for whether words connoting the different emotions appear in each sentence. The `fear' emotion is the variable of interest; the fear factor variable is aggregated back up to the tweet level\footnote{This sentence-level analysis is an artifact of the R packages used to conduct the text-cleaning process; there is no change by aggregating back up to the tweet level after the sentiment analysis is done.}, giving a binary factor for whether words associated with fear appear in the tweet text.  Tf-idf scaling was not performed.
 
+\subsubsection{NRC aggregation procedure}\label{aggregation}
 For both sentiment estimation measures, the sentiment scores for the tweets were aggregated to the county level. The NRC score was aggregated by calculating the proportion of tweets in a county on a given day that contained fearful language. If we assume that each tweet is an independent `draw' from the local population, this proportion follows a  binomial distribution, as the variable represents the number of successes -- tweets containing fearful language -- on a sequence of independent Bernoulli trials (tweets in a location on a particular day). We know from the Central Limit Theorem that a binomial distribution approximates a normal distribution with repeated trials; however, for this to be the case, the number of trials on a given day has to be sufficiently large. This means that on days  where the number of observed tweets is low, the proportion of fearful tweets in the observed sample will not be an accurate estimator for the population value. Take the extreme example: in a county where there is one observed tweet on a given day, the value of the proportion can only be 0 or 1. With repeated sampling, the proportion will converge to the population proportion, but this N has to be sufficiently large. This effect gives rise to a shape of the histogram of county-day proportions for the whole dataset, where we observe an increase in density at 0 and 1. The central limit theorem does not specify a lower bound sample size to alleviate this issue, but 30 is a common approximation. Hence, in order to rectify the inaccurate estimators for small-\(n\) county/days, we exclude county/days where the number of tweets is below 30. In doing so, we discard around 8.1\% of the data. This procedure, however, means that the panel is unbalanced based on tweet count; this possible selection effect is discussed in section \ref{robust}. The histogram and quantile plots for the fear proportion variable are figures \ref{n30_hist} and \ref{n30_qplot} in appendix \ref{add-figs}: we observe that, although the tails are heavy, the distribution is a fair approximation to normal.
 
 \begin{figure}[h!]
@@ -373,7 +374,7 @@ The aggregation procedure for the VADER package is broadly similar to the NRC le
   \floatfoot{All variables reported at county level. Stringency indices bounded between 0 and 100. Household income as measured in 2013 US dollars, unadjusted.}
   \end{table}
 \end{singlespace}
-The primary dependent variable is `\% devices at home'; that is, the proportion of devices on a given county-day which stay completely at home. It has a mean of 37\%; as expected, it is strongly correlated with time. \textit{Some comments on the distribution and variation here}. Tweets per week and device count have a very large range, since these track with county population (which is very variable, unlike voting districts: Los Angeles county has 10 million residents, for example). However both variables show little per capita variation, pointing to consistent sampling across the whole of the US: in this way, sampling bias on these variables is unlikely. Deaths and cases are path-dependent, as New York City and Seattle acquired serious outbreaks earlier than other areas. Data is reported for all 3,142 counties over the 90 days between February 1 and May 1 2020.
+The primary dependent variable is `\% devices at home'; that is, the proportion of devices on a given county-day which stay completely at home. It has a mean of 37\%; as expected, it is strongly correlated with time. . Tweets per week and device count have a very large range, since these track with county population (which is very variable, unlike voting districts: Los Angeles county has 10 million residents, for example). However both variables show little per capita variation, pointing to consistent sampling across the whole of the US: in this way, sampling bias on these variables is unlikely. Deaths and cases are path-dependent, as New York City, California, and Seattle acquired serious outbreaks earlier than other areas. Data is reported for all 3,142 counties over the 90 days between February 1 and May 1 2020. 
 
 \section{Methods}\label{methods}
 \begin{figure}[!htb]
@@ -384,11 +385,11 @@ The primary dependent variable is `\% devices at home'; that is, the proportion 
 \subsection{Central Argument and Empirical Specficiation}
 The primary aim of this dissertation is to investigate whether there is a link between individual risk preferences and social distancing. Previous research has established several important factors in predicting mobility in response to health risks: in addition to policy orders, demographic variables like individual susceptibility, political affiliation, and the progression of disease, characteristics like risk preference have been identified as key determinants of social distancing. The argument of the dissertation turns on the asssertion that risk preferences vary by region, a notion backed up by the influential Global Preferences Survey \parencite{falkGlobalEvidenceEconomic2018} and applied to the COVID-19 pandemic by \textcite{fanHeterogeneousActionsBeliefs2020}. I assert that this risk preference can, to some extent, be measured by a novel data source: what people say on social media. Using a very large dataset of tweets which mention COVID-19, I argue that those who are risk averse will post more negatively about COVID-19; furthermore, the location of these users indicates a level of risk preference that is shared among those in the local area. This is because complex combinations of local factors -- factors such as the trust in that particular area's local government, the pattern of supply shortages in that area's supermarket, the quality of public transport, and the commuting practises of the area -- all contribute to a shared local perception of pandemic risk. I assert, then, that this shared perception is measured by the local chatter on social media, and I measure it by creating a county-level index of social media sentiment towards COVID-19. We are interested in whether this county index is able significantly to predict the level of social distancing that an area practises.
 
-This dissertation does not aim for a causal identification, but focuses on investigating the extent to which the social distancing and social sentiment are correlated. To that end, I estimate the following specification, where a vector of social distancing metrics in county \(c\) on date \(t\) and week \(w\) is a function of
+To that end, I estimate the following specification, where a vector of social distancing metrics in county \(c\) of state \(s\), on date \(t\) and week \(w\) is a function of
 
 \begin{equation}
   \label{eq:mainspec}
-  SD_{ct} = \beta_1 Sent_{ct} + \beta_2 TweetCount_{ct} + \beta_3 AtHome_{ct} + \beta_4 NatStringency_{t} + \beta_5 Deaths_{ct} + \gamma_c + \delta_w
+  SD_{ct} = \beta_1 Sent_{ct} + \beta_2 TweetCount_{ct} + \beta_3 StateStringency_{st} + \beta_4 NatStringency_{t} + \beta_5 Deaths_{ct} + \gamma_c + \delta_w
 \end{equation}. The sentiment effect is captured by \(\beta_1\) and \(\beta_2\), policy effects by \(\beta_3\) and \(\beta_4\), and local health risk and disease spread by \(\beta_5\). This primary specification captures the local effects of sentiment, as discussed above; in order to account for the Februrary selection effect discussed in section \ref{geocov}, where far lower COVID tweets observed in Februrary could indicate only those fearful of the virus tweeting about it, we include the number of tweets observed in the county on that week as a covariate. Including this possible confounder in the regression allows for the effect of low observations to be separated from the true effect of tweet sentiment. As such, our primary hypothesis has the first and second coefficients as the effect of interest such that
 
 \begin{align*}
@@ -398,7 +399,6 @@ This dissertation does not aim for a causal identification, but focuses on inves
 
 
 The third, fourth, and fifth coefficients cover time-varying factors like the imposition of policy orders and the spread of the virus. \(\beta_5\) represents not only viral spread, but can act as a proxy for perceived local health risk: this follows \textcite{chernozhukovCausalImpactMasks2021}, in whose model COVID death counts represent the time-varying local and national beliefs on the seriousness of the pandemic. It is important to note that a central identifying assumption in the two-way fixed effects design is that there is no source of time-varying, unobserved heterogeneity: thus it is important to verify that the correct specification is chosen for these time-varying confounders. Finally, \(\gamma_c\) is a vector of county-level fixed effects, capturing all constant demographic variables like percent above 65, income, commuting patterns, etc.; \(\delta_w\) is a vector of week fixed effects, capturing among others the national-level disease spread and health risk perception. All regressions have two-way White heteroscedasticity-robust standard errors, clustered at the county and week level.
-
 
 
 \subsubsection{Variables}
@@ -411,60 +411,60 @@ The fixed effects model is characterised by the linear model
 \begin{equation}
   E[Y_{it} | A_i , X_{it}, t] = \alpha + \lambda_t + A^\prime_i \gamma + X^\prime_{it} \beta + \rho D_{it}
 \end{equation}
-, where \(Y_{it}\) is the outcome, \(\alpha\) the intercept, \(\lambda_t\) the time effect, \(A^\prime_i \gamma\) unobserved, fixed confounders, \(X^\prime_{it} \beta\) observed time-varying confounders, and \(\rho D_{it}\) the variable of interest \parencite[222]{angristMostlyHarmlessEconometrics2009}. The assumptions are that the effect of \(\rho\) is additive and constant, and that the unobserved fixed effects do not vary with time\footnote{That is, the omission of a time subscript on \(A^\prime_i \gamma\) is accurate.}. In our case, both assumptions are plausible. This directly implies the model 
+, where \(Y_{it}\) is the outcome, \(\alpha\) the intercept, \(\lambda_t\) the time effect, \(A^\prime_i \gamma\) unobserved, fixed confounders, \(X^\prime_{it} \beta\) observed time-varying confounders, and \(\rho D_{it}\) the variable of interest \parencite[222]{angristMostlyHarmlessEconometrics2009a}. The assumptions are that the effect of \(\rho\) is additive and constant, and that the unobserved fixed effects do not vary with time\footnote{That is, the omission of a time subscript on \(A^\prime_i \gamma\) is accurate.}. In our case, both assumptions are plausible. This directly implies the model 
 \begin{align}
   Y_{it} &= \alpha_i + \lambda_t + \rho D_{it} + X^\prime_{it} \beta + \epsilon_{it}, \textrm{, where} \\
   \alpha_i &\equiv \alpha + A_i^\prime \gamma
-\end{align}. In this way we estimate the (potentially large number of ) unobserved confounders as the \textit{fixed effect} \(\alpha_i\), which enters into the model as a coefficient on an indicator for each region, and also include a \textit{time effect} \(\lambda_t\). With these effects meted out, we are able to obtain a consistent estimator for the overall, shared effect of our variable of interest, under the assumption that the time-varying confounders are adequately specified. %Maybe comment on measurement error here, too.
-
-
+\end{align}. In this way we estimate the (potentially large number of) unobserved confounders as the \textit{fixed effect} \(\alpha_i\), which enters into the model as a coefficient on an indicator for each region, and also include a \textit{time effect} \(\lambda_t\). With these effects accounted for, we are able to obtain a consistent estimator for the overall, shared effect of our variable of interest, under the assumption that the time-varying confounders are adequately specified. Note that this dissertation does not aim for a causal identification, but focuses on investigating the extent to which the social distancing and social sentiment are correlated. This is because in order to establish causality in a fixed effects design we must establish strict exogeneity of social media sentiment and social distancing. In particular, there should be plausibly no simultaneity or reverse causality: mobility cannot affect social media sentiment, and the two should not be jointly determined. Although we address this by controlling for the time-varying confounders of these two variables, we cannot do so to the extent that we conclude that sentiment causes social distancing; and the time-varying covariates of cases and deaths data are clearly endogenous with the level of mobility. In this case, therefore, a causal design is not feasible, and the objective of this research design is to establish a plausible correlation between sentiment and social distancing.
+%Maybe comment on measurement error here, too.
 
 \section{Results}%1000 words
 \subsection{Main Specification}
-The basic message of the main specification can be seen in figure \ref{setsplit} in appendix \ref{add-figs}, which shows that counties with a fear sentiment above the median value have 3 percentage points more devices staying at home. Below is the regression table for the main specification as in equation \ref{eq:mainspec}, which uses the NRC-derived proportion of fearful tweets as the sentiment measure. The two dependent variables are 
+The basic message of the main specification can be seen in figure \ref{setsplit} in appendix \ref{add-figs}, which shows that counties with a fear sentiment above the median value have 3 percentage points more devices staying at home. Below is the regression table for the main specification as in equation \ref{eq:mainspec}, which reports two sentiment measures: \texttt{fearprop}, the NRC-derived proportion of fearful tweets, and \texttt{negscore}, the VADER-derived negativity score of individual tweets\footnote{\texttt{negscore} reports results as a number between 0 and 1, so the higher the score, the more negative the tweet.}. The two dependent variables are the median minutes spent outside home, and the proportion of devices that do not leave home all day. Models 1 and 2 report the NRC sentiment measure, while 3 and 4 report the VADER sentiment measure; models 1 and 3 report the median minutes mobility measure, while 2 and 4 report the proportion-home measure. In this specification, the sentiment scores are aggregated to the county-day level, as discussed in section \ref{aggregation}. All regression output was computed with the R package \texttt{fixest} \parencite{bergeEfficientEstimationMaximum2018}.
 
 \begin{singlespace}
 \centering
 \begin{table}[!htb]
-\caption{Main Specification: NRC Sentiment}
+\caption{Main Specification: NRC and VADER sentiments, county aggregated}
 \label{tab:mainspec}
 \ra{0.6}
 \begin{tabular}{lcccc}
   \tabularnewline\midrule\midrule
-  Dependent Variables:&completely\_home\_device\_count&at\_home\_prop&completely\_home\_device\_count&at\_home\_prop\\
   Model:&(1) & (2) & (3) & (4)\\
   \midrule \emph{Variables}&   &   &   &  \\
-  meanfear&984.8$^{**}$ & 0.0088$^{*}$ &    &   \\
-    &(357.5) & (0.0050) &    &   \\
-  at\_home\_orderTRUE&704.2$^{**}$ & 0.0295$^{***}$ & 716.4$^{**}$ & 0.0295$^{***}$\\
-    &(267.5) & (0.0039) & (263.7) & (0.0039)\\
-  NAT\_StringencyIndex&106.6$^{***}$ & 0.0030$^{***}$ & 106.7$^{***}$ & 0.0031$^{***}$\\
-    &(10.68) & (0.0003) & (10.98) & (0.0003)\\
-  death&-11.84$^{**}$ & $-6.6\times 10^{-5}$$^{**}$ & -11.64$^{**}$ & $-6.77\times 10^{-5}$$^{**}$\\
-    &(4.757) & ($2.34\times 10^{-5}$) & (4.663) & ($2.32\times 10^{-5}$)\\
-  confirmed&1.244$^{***}$ & $8.17\times 10^{-6}$$^{***}$ & 1.230$^{***}$ & $8.32\times 10^{-6}$$^{***}$\\
-    &(0.4063) & ($2.25\times 10^{-6}$) & (0.4007) & ($2.24\times 10^{-6}$)\\
-  meanneg&   &    & 1,011.1 & 0.0606$^{*}$\\
-    &   &    & (2,458.5) & (0.0339)\\
+  fear\_prop&-16,667.2$^{***}$ & 0.0094$^{*}$ &    &   \\
+    &(5,196.4) & (0.0048) &    &   \\
+  neg\_score&   &    & -46,448.1 & 0.0656$^{*}$\\
+    &   &    & (30,243.4) & (0.0344)\\
+  NAT\_Stringency&-1,138.2$^{***}$ & 0.0029$^{***}$ & -1,157.0$^{***}$ & 0.0029$^{***}$\\
+    &(252.0) & (0.0003) & (251.7) & (0.0003)\\
+  STA\_Stringency&-218.5$^{**}$ & 0.0005$^{*}$ & -220.0$^{**}$ & 0.0005$^{*}$\\
+    &(94.12) & (0.0002) & (94.37) & (0.0002)\\
+  death&119.7$^{**}$ & $-6.93\times 10^{-5}$$^{**}$ & 119.7$^{**}$ & $-6.92\times 10^{-5}$$^{**}$\\
+    &(50.80) & ($2.45\times 10^{-5}$) & (50.90) & ($2.45\times 10^{-5}$)\\
+  confirmed&-12.95$^{**}$ & $8.43\times 10^{-6}$$^{***}$ & -12.94$^{**}$ & $8.43\times 10^{-6}$$^{***}$\\
+    &(4.562) & ($2.34\times 10^{-6}$) & (4.573) & ($2.34\times 10^{-6}$)\\
   \midrule \emph{Fixed-effects}&   &   &   &  \\
   week & Yes & Yes & Yes & Yes\\
   FIPS & Yes & Yes & Yes & Yes\\
   \midrule \emph{Fit statistics}&  & & & \\
-  Observations & 16,474&16,474&16,239&16,239\\
-  Log-Likelihood & -156,190.7&31,715.0&-153,815.7&31,229.2\\
-  AIC & 313,611.3&-62,199.9&308,861.4&-61,228.4\\
-  BIC & 318,352.7&-57,458.6&313,593.9&-56,495.8\\
-  RMSE & 3,172.0&0.03529&3,143.4&0.03537\\
-  Size of the 'effective' sample & 16,474&16,474&16,239&16,239\\
-  F-test & 452.59&160.71&439.90&157.64\\
-  F-test (projected) & 542.12&710.57&531.23&703.27\\
-  \midrule\midrule\multicolumn{5}{l}{\emph{Two-way (week \& FIPS) standard-errors in parentheses}}\\
+  Observations & 16,474&16,474&16,474&16,474\\
+  Adjusted R$^2$ & 0.72062&0.85262&0.72038&0.85272\\
+Within Adjusted R$^2$ & 0.19660&0.16258&0.19588&0.16312\\
+  Log-Likelihood & -192,287.8&31,513.9&-192,295.1&31,519.3\\
+  BIC & 390,546.9&-57,056.5&390,561.5&-57,067.3\\
+  RMSE & 28,374.8&0.03573&28,387.4&0.03571\\
+  Size of the 'effective' sample & 16,474&16,474&16,474&16,474\\
+  F-test & 70.203&156.21&70.118&156.33\\
+  F-test (projected) & 777.40&616.96&773.89&619.44\\
+Wald (joint nullity) & 7.7500&130.97&7.5517&136.04\\
+  \midrule\midrule\multicolumn{5}{l}{\emph{Dependent variables:} (1), (3) median minutes not at home; (2), (4) proportion devices home all day}\\
+  \multicolumn{5}{l}{\emph{Two-way (week \& FIPS) standard-errors in parentheses}}\\
   \multicolumn{5}{l}{\emph{Signif. Codes: ***: 0.01, **: 0.05, *: 0.1}}\\
   \end{tabular}
 \end{table}
-
 \end{singlespace}
-
+We see that in models 2, and 4, the sentiment measure is a significant predictor of mobility at the 10\% level, while in model 1 sentiment is significant at 1 \%. In model 3, the negativity score has a larger standard error, with a corresponding \(p\)-value of 0.148. Since we use OLS fixed effects, the parameters can readily be interpreted: a 100\% proportion of fearful tweets leads to on average 16,667 fewer minutes spent outside in a county each day, and leads to a 0.94 percentage point increase in the proportion of devices staying home during work hours. Similarly, a county exhibiting completely negative tweets corresponds to a 6.5\% reduction in proportion of devices leaving the home. These effect sizes, while relatively small in comarison to the Stringency Index policy variables\footnote{Which are reported on a 0 to 100 scale}, remain significant predictors for key mobility metrics. The effect sizes are small for deaths and cases because the range of the variable is large. Concerningly, however, the cumulative death count in a county appears to have a significant effect corresponding to risk-seeking behaviour, where an additional death corresponds to an increase in minutes spent outside the home and a decrease in share of devices remaining at home. I hypothesise that confirmed cases and deaths measure the same effect, the beliefs updating with the progression of the virus; as such, including it in addition to deaths cancels out the deaths effect. Indeed, dropping the observed cases causes the coefficient sign on deaths to flip and indicate risk-averse behaviour, as it captures the entire effect. This  The \(F\) tests and Wald tests for nullity of the parameters are all highly significant.
 
 \subsection{Alternative model specifications}\label{alt-specs}
 The variable used for the mobility data, and presented as the dependent variable, is the proportion of the measured devices which stay at home all day. Hence, the variable is continuous and bounded between 0 to 1. Although the primary specification is with ordinary least squares, we may wish to address the problem that OLS can identify values beyond \([0,1]\). This quality of the dependent variable may indicate a logit transformation followed by OLS estimation, a generalised linear model with a binomial link function, or a beta regression. 
@@ -526,6 +526,40 @@ On visual inspection of figure \ref{popvsmobil}, a positive relationship does ex
   \midrule\midrule\multicolumn{7}{l}{\emph{Two-way (week \& FIPS) standard-errors in parentheses}}\\
   \multicolumn{7}{l}{\emph{Signif. Codes: ***: 0.01, **: 0.05, *: 0.1}}\\
   \end{tabular}
+\end{table}
+\begin{table}
+  \caption{RT MSpecs}
+  \begin{tabular}{lcccccc}
+    \tabularnewline\midrule\midrule
+    Dependent Variables:&CHome\_count&Med\_pct\_timehome&AHome\_prop&CHome\_count&Med\_pct\_timehome&AHome\_prop\\
+    Model:&(1) & (2) & (3) & (4) & (5) & (6)\\
+    \midrule \emph{Variables}&   &   &   &   &   &  \\
+    meanfear&428.4 & -8.585 & 0.0198 &    &    &   \\
+      &(339.6) & (588.2) & (0.0138) &    &    &   \\
+    at\_home\_orderTRUE&674.0$^{***}$ & 1,015.5$^{***}$ & 0.0300$^{***}$ & 674.0$^{***}$ & 1,012.4$^{***}$ & 0.0302$^{***}$\\
+      &(171.0) & (264.8) & (0.0024) & (171.7) & (265.6) & (0.0024)\\
+    NAT\_StringencyIndex&53.03$^{***}$ & 77.73$^{***}$ & 0.0030$^{***}$ & 53.66$^{***}$ & 78.51$^{***}$ & 0.0030$^{***}$\\
+      &(4.850) & (13.09) & (0.0003) & (4.659) & (13.45) & (0.0003)\\
+    death&-13.19$^{**}$ & -20.89$^{**}$ & $-9.74\times 10^{-5}$$^{**}$ & -13.15$^{**}$ & -20.82$^{**}$ & $-9.65\times 10^{-5}$$^{**}$\\
+      &(5.411) & (8.933) & ($3.28\times 10^{-5}$) & (5.399) & (8.921) & ($3.25\times 10^{-5}$)\\
+    confirmed&1.427$^{***}$ & 2.326$^{**}$ & $1.19\times 10^{-5}$$^{***}$ & 1.422$^{***}$ & 2.318$^{**}$ & $1.18\times 10^{-5}$$^{***}$\\
+      &(0.4540) & (0.7735) & ($2.96\times 10^{-6}$) & (0.4530) & (0.7725) & ($2.94\times 10^{-6}$)\\
+    meanneg&   &    &    & 170.0 & 810.3$^{*}$ & 0.0140$^{*}$\\
+      &   &    &    & (268.5) & (405.4) & (0.0070)\\
+    \midrule \emph{Fixed-effects}&   &   &   &   &   &  \\
+    week & Yes & Yes & Yes & Yes & Yes & Yes\\
+    FIPS & Yes & Yes & Yes & Yes & Yes & Yes\\
+    \midrule \emph{Fit statistics}&  & & & & & \\
+    Observations & 43,258&43,258&43,258&42,683&42,683&42,683\\
+    Log-Likelihood & -397,854.6&-412,350.3&80,178.7&-392,778.1&-407,075.7&79,241.9\\
+    BIC & 805,754.2&834,745.8&-150,312.2&795,482.1&824,077.3&-148,557.9\\
+    RMSE & 2,388.2&3,338.9&0.03791&2,400.1&3,355.1&0.03780\\
+    Size of the 'effective' sample & 43,258&43,258&43,258&42,683&42,683&42,683\\
+    F-test & 740.76&3,338.8&205.00&738.68&3,331.3&206.04\\
+    F-test (projected) & 1,634.0&2,293.2&1,784.4&1,605.1&2,256.2&1,763.8\\
+    \midrule\midrule\multicolumn{7}{l}{\emph{Two-way (week \& FIPS) standard-errors in parentheses}}\\
+    \multicolumn{7}{l}{\emph{Signif. Codes: ***: 0.01, **: 0.05, *: 0.1}}\\
+    \end{tabular}
 \end{table}
 \end{landscape}
 \section{Additional Figures} \label{add-figs}
