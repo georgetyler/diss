@@ -420,7 +420,7 @@ The fixed effects model is characterised by the linear model
 
 \section{Results}%1000 words
 \subsection{Main Specification}
-The basic message of the main specification can be seen in figure \ref{setsplit} in appendix \ref{add-figs}, which shows that counties with a fear sentiment above the median value have 3 percentage points more devices staying at home. Below is the regression table for the main specification as in equation \ref{eq:mainspec}, which reports two sentiment measures: \texttt{fearprop}, the NRC-derived proportion of fearful tweets, and \texttt{negscore}, the VADER-derived negativity score of individual tweets\footnote{\texttt{negscore} reports results as a number between 0 and 1, so the higher the score, the more negative the tweet.}. The two dependent variables are the median minutes spent outside home, and the proportion of devices that do not leave home all day. Models 1 and 2 report the NRC sentiment measure, while 3 and 4 report the VADER sentiment measure; models 1 and 3 report the median minutes mobility measure, while 2 and 4 report the proportion-home measure. In this specification, the sentiment scores are aggregated to the county-day level, as discussed in section \ref{aggregation}; after data trimming, we estimate the model on a balanced panel of 16,474 observations over 597 counties and 14 weeks. All regression output was computed with the R package \texttt{fixest} \parencite{bergeEfficientEstimationMaximum2018}.
+The basic message of the main specification can be seen in figure \ref{setsplit} in appendix \ref{add-figs}, which shows that counties with a fear sentiment above the median value have 3 percentage points more devices staying at home. Below is the regression table for the main specification as in equation \ref{eq:mainspec}, which reports two sentiment measures: \texttt{fearprop}, the NRC-derived proportion of fearful tweets, and \texttt{negscore}, the VADER-derived negativity score of individual tweets\footnote{\texttt{negscore} reports results as a number between 0 and 1, so the higher the score, the more negative the tweet.}. The two dependent variables are the median minutes spent outside home, and the proportion of devices that do not leave home all day. Models 1 and 2 report the NRC sentiment measure, while 3 and 4 report the VADER sentiment measure; models 1 and 3 report the median minutes mobility measure, while 2 and 4 report the proportion-home measure. In this specification, the sentiment scores are aggregated to the county-day level, as discussed in section \ref{aggregation}; after data trimming, we estimate the model on a balanced panel of 16,474 observations over 597 counties and 14 weeks. All regression output was computed with the R package \texttt{fixest} \parencite{bergeEfficientEstimationMaximum2018}. First, we estimate a linear model with OLS and no fixed effects (table in appendix), finding that the sentiment score is a significant predictor of mobility; this verifies that a relationship does exist and gives the basis for a more sophisticated fixed effects design. With linear OLS, however, there may be unobserved, time-invariant factors which may confound mobility and the sentiment measure; we use a two-way fixed effects design to account for this. 
 
 \begin{singlespace}
 \centering
@@ -469,7 +469,7 @@ We see that in models 2, and 4, the sentiment measure is a significant predictor
 \subsection{Alternative model specifications}\label{alt-specs}
 In order to verify the results over different model specifcations, we estimate several different alternative specifications. All use the same fixed-effects OLS estimation procedure, and the regression tables referred to are in appendix \ref{add-figs}. First, the main sentiment measure uses a dataset which omits all `retweets' from a user. This was done in order to more accurately capture the user's own risk preference, as one is be more likely to retweet inflammatory and emotional content than write it oneself. As such, when we estimate a model which uses a sentiment measure that includes retweets, we observe a drop in predictive power of the variable of interest. As in table \ref{tab:ms-rt}, the emotion-based sentiment performs poorly, while the polarity-based sentiment is significant at the 10\% level. Assuming the model is correctly specified, this indicates that the overall polarity is more consistent than emotion between tweets and retweets. This implies that individuals are likely to retweet things that conform to their overall disposition, but with differing levels of emotion. 
 
-Next, the main argument, that sentiment and risk preference varies according to region, turns on the notion of aggregating the sentiment measure from individual tweets to the county-day level. As such, estimating a model with individual tweets as the base unit does not make sense, as the dependent variable is measured at the county, rather than individual, level. However, if user fixed effects are included rather than county fixed effects, inference is possible, since user-level fixed effects also encapsulate all of the time-invariant properties of the county which the user lives in. Indeed, the sentiment measures maintain predictive power with an individual-level, user fixed-effects design: see table \ref{tab:ind-uid}.
+
 
 Finally, a potential problem is that one mobility variable is the proportion of the measured devices which stay at home all day. This variable is continuous and bounded between 0 and 1. Although the primary specification is with ordinary least squares, we may wish to address the problem that OLS can identify values beyond \([0,1]\). This quality of the dependent variable may indicate a logit transformation followed by OLS estimation, a generalised linear model with a binomial link function, or a beta regression. 
 \subsection{Robustness checks}\label{robust}
@@ -481,12 +481,19 @@ As discussed in section \ref{nrc}, a potentially problematic feature of the twee
   \includegraphics[width=0.6\textwidth]{figs/popvsmobil.png}
   \floatfoot{The vertical lines in the diagram correspond to counties with mobility scores observed at different dates.}
 \end{figure}
-On visual inspection of figure \ref{popvsmobil}, a positive relationship does exist between the proportion staying at home and the county population (meaning that higher-population counties have \textit{decreased} mobility); however, it appears that this is primarily driven by the two large county outliers. These correspond to the highly dense Los Angeles County and Cooke County, Illinois\footnote{i.e., Chicago}. Discounting these highly dense outlier cities, we can tentatively say that mobility is largely independent of county population. As a consequence, an unbalanced panel could be accomodated. The Heckman correction procedure would be another option for obtaining unbiased parameter estimates \parencite{wooldridgeSelectionCorrectionsPanel1995}, as would weighting the samples by population; and the final option is to avoid aggregating the sentiment scores and run the empirical specification on the individual level. That is, the base unit is an individual tweet rather than the county/day. This yields a much larger panel of the individual observations.
+On visual inspection of figure \ref{popvsmobil}, a positive relationship does exist between the proportion staying at home and the county population (meaning that higher-population counties have \textit{decreased} mobility); however, it appears that this is primarily driven by the two large county outliers. These correspond to the highly dense Los Angeles County and Cooke County, Illinois\footnote{i.e., Chicago}. Discounting these highly dense outlier cities, we can tentatively say that mobility is largely independent of county population. As a consequence, an unbalanced panel could be accomodated. Indeed, if population outliers had a major effect on the predictive power of sentiment, removing the counties with the top and bottom 5 \% of the population\footnote{This process is known as `Winsorising' the data.} would negate the effect. However, running the main specification after trimming these counties shows no change in the predictive power of sentiment on mobility; see table \ref{tab:winsor}.
 
-Another concern is that the link between mobility and sentiment in the early pandemic could be largely driven by the states where the virus spread first: California, New York, and Washington. Dropping these states from the dataset, we observe that on the main specification three out of four models lose predictive power at the 10\% level, although these three models do have \(p\)-values of between 0.109 and 0.14; this may indicate that states where the virus spread first had both a higher negative sentiment and lower mobility, and that this `early' effect is confounder of the two variables. Investigating this further, we re-include the initial states and estimate a split-sample, where panels 
 
-\section{Discussion and conclusion} %1000 words
+The Heckman correction procedure would be another option for obtaining unbiased parameter estimates \parencite{wooldridgeSelectionCorrectionsPanel1995}, as would weighting the samples by population; and the final option is to avoid aggregating the sentiment scores and run the empirical specification on the individual level. That is, the base unit is an individual tweet rather than the county/day. This yields a much larger, and balanced panel of the individual observations. However, the main argument, that sentiment and risk preference varies according to region, turns on the notion of aggregating the sentiment measure from individual tweets to the county-day level. As such, estimating a model with individual tweets as the base unit does not make sense, as the dependent variable is measured at the county, rather than individual, level. However, if user fixed effects are included rather than county fixed effects, inference is possible, since user-level fixed effects also encapsulate all of the time-invariant properties of the county which the user lives in. Indeed, the sentiment measures maintain predictive power with an individual-level, user fixed-effects design: see table \ref{tab:ind-uid}.
 
+Another concern is that the link between mobility and sentiment in the early pandemic could be largely driven by the states where the virus spread first: states where the virus spread first had both a higher negative sentiment and lower mobility, and that this `early' effect is confounder of the two variables. To investigate this, we split the sample into the first and second 6 weeks; however, as in table \ref{tab:sixweeks}, the results do not change, indicating that there is no early effect.
+
+\section{Discussion and conclusion} 
+Economic research into the response to COVID-19 was wide-ranging and speedy, and quickly established that the amount that individuals changed their behaviour varied significantly across regions and time. It also established that individual decisionmaking, rather than a response to policy, determined the majority of the behaviour change, and that several factors were key in determining both the ability and the proclivity to socially distance. 
+
+This dissertation adds to that literature by demonstrating a new source for measuring a key determinant of economic behavior in a pandemic: health risk preference. Using a novel and very large dataset, alongside the notion of regional variation in risk preference, this dissertation has argued that online communication can be an important indicator of the behavioural response to the spread of a pandemic. Under the assumption that social media posts indicate this risk preference in the form of sentiment, this disseration has used two different methods of extracting risk preferences from the posts. Both methods are a significant predictor of mobility at the county level, when estimated in both a linear model and a two-way fixed effects model. This result is robust to several alternative specifications and is largely uniform across counties and time periods; a number of possible sources of bias were also considered and addressed. This leads to the conclusion that social media sentiment can predict the extent of local mobility. However, the sentiment measures are not consistently significant predictor variables, unlike policy and COVID case variables, and the estimation procedure involves a number of data prrocessing steps. Additionally, the research design does not seek to establish a causal link, and rests on the assumption that the sentiment of social media posts are determined in part by risk preferences, and that this risk preference consists of a local and individual part. More research is needed to investigate whether these results replicate in different scenarios, to establish a firm link between risk preference and social media sentiment, and whether social media data can  be used to predict other sorts of economic variables. 
+
+It is important to understand the implications of this result. The key source of data for this research is a novel method of obtaining geolocated communications expressing personal opinions. Access to the data was approved by Twitter after a lengthy application process, and these communications are entirely in the public domain. However, the public nature of the communications are likely not realised by the vast majority of users. While it must be stressed that this particular application of the Twitter data was approved and ethical, the notion that online public communications can be used to predict local behaviour is powerful. Particularly salient is the fact that the sentiment measure used in this dissertation is far less sophisticated than a large number of current techniques. This research is a timely reminder that applying text analysis to internet communications can be a powerful tool for a variety of economic actors.
 
 \printbibliography
 %TC:ignore
@@ -495,44 +502,40 @@ Another concern is that the link between mobility and sentiment in the early pan
 \appendix 
 \section{Regression Tables}
 
-  \begin{table}
-    \caption{Main Specification: Drop CA, NY, WA}
-    \begin{tabular}{lcccc}
-      \tabularnewline\midrule\midrule
-      Dependent Variables:&\multicolumn{2}{c}{completely\_home\_device\_count/device\_count}&\multicolumn{2}{c}{median\_non\_home\_dwell\_time}\\
-      Model:&(1) & (2) & (3) & (4)\\
-      \midrule \emph{Variables}&   &   &   &  \\
-      meanneg&0.0471 &    & -39,649.9 &   \\
-        &(0.0350) &    & (26,418.7) &   \\
-      NAT\_StringencyIndex&0.0028$^{***}$ & 0.0028$^{***}$ & -1,093.9$^{***}$ & -1,078.2$^{***}$\\
-        &(0.0004) & (0.0004) & (214.2) & (213.8)\\
-      STA\_StringencyIndex&0.0004 & 0.0004 & -175.4$^{*}$ & -174.3$^{*}$\\
-        &(0.0002) & (0.0002) & (84.67) & (84.51)\\
-      death&$-5.48\times 10^{-5}$ & $-5.48\times 10^{-5}$ & 172.9$^{**}$ & 172.9$^{**}$\\
-        &($4\times 10^{-5}$) & ($4\times 10^{-5}$) & (78.23) & (78.07)\\
-      confirmed&$9.05\times 10^{-6}$$^{**}$ & $9.05\times 10^{-6}$$^{**}$ & -19.34$^{***}$ & -19.34$^{***}$\\
-        &($3.97\times 10^{-6}$) & ($3.97\times 10^{-6}$) & (5.545) & (5.534)\\
-      meanfear&   & 0.0089 &    & -13,895.0$^{***}$\\
-        &   & (0.0051) &    & (4,567.3)\\
-      \midrule \emph{Fixed-effects}&   &   &   &  \\
-      week & Yes & Yes & Yes & Yes\\
-      FIPS & Yes & Yes & Yes & Yes\\
-      \midrule \emph{Fit statistics}&  & & & \\
-      Observations & 14,248&14,248&14,248&14,248\\
-      Log-Likelihood & 27,279.4&27,277.9&-165,495.9&-165,491.1\\
-      BIC & -49,240.9&-49,238.0&336,309.6&336,299.9\\
-      RMSE & 0.03567&0.03567&26,807.6&26,798.4\\
-      Size of the 'effective' sample & 14,248&14,248&14,248&14,248\\
-      F-test & 143.99&143.95&74.628&74.695\\
-      F-test (projected) & 470.51&469.84&903.78&906.26\\
-      \midrule\midrule\multicolumn{5}{l}{\emph{Two-way (week \& FIPS) standard-errors in parentheses}}\\
-      \multicolumn{5}{l}{\emph{Signif. Codes: ***: 0.01, **: 0.05, *: 0.1}}\\
-      \end{tabular} 
-  \end{table}
+  
 \begin{landscape}
+\begin{table}
+  \caption{Main Specification, OLS}
+  \begin{tabular}{lcccc}
+    \tabularnewline\midrule\midrule
+    Dependent Variables:&\multicolumn{2}{c}{completely\_home\_device\_count/device\_count}&\multicolumn{2}{c}{median\_non\_home\_dwell\_time}\\
+    Model:&(1) & (2) & (3) & (4)\\
+    \midrule \emph{Variables}&   &   &   &  \\
+    (Intercept)&0.1986$^{***}$ & 0.1865$^{***}$ & 98,041.7$^{***}$ & 94,559.9$^{***}$\\
+      &(0.0025) & (0.0024) & (1,984.5) & (1,882.7)\\
+    meanneg&0.0817$^{***}$ &    & -49,024.6$^{***}$ &   \\
+      &(0.0220) &    & (17,292.0) &   \\
+    NAT\_StringencyIndex&0.0010$^{***}$ & 0.0010$^{***}$ & -1,280.5$^{***}$ & -1,256.8$^{***}$\\
+      &($5.14\times 10^{-5}$) & ($5\times 10^{-5}$) & (40.37) & (39.41)\\
+    STA\_StringencyIndex&0.0015$^{***}$ & 0.0015$^{***}$ & 112.9$^{***}$ & 107.4$^{***}$\\
+      &($4.64\times 10^{-5}$) & ($4.63\times 10^{-5}$) & (36.52) & (36.50)\\
+    death&-0.0001$^{***}$ & -0.0001$^{***}$ & -10.15$^{**}$ & -10.48$^{**}$\\
+      &($6.25\times 10^{-6}$) & ($6.24\times 10^{-6}$) & (4.917) & (4.916)\\
+    confirmed&$1.33\times 10^{-5}$$^{***}$ & $1.33\times 10^{-5}$$^{***}$ & 1.381$^{***}$ & 1.399$^{***}$\\
+      &($4.18\times 10^{-7}$) & ($4.17\times 10^{-7}$) & (0.3287) & (0.3287)\\
+    meanfear&   & 0.0522$^{***}$ &    & -3,910.6\\
+      &   & (0.0053) &    & (4,217.1)\\
+    \midrule \emph{Fit statistics}&  & & & \\
+    Observations & 16,474&16,474&16,474&16,474\\
+    R$^2$ & 0.61519&0.61708&0.28535&0.28504\\
+    Adjusted R$^2$ & 0.61508&0.61697&0.28514&0.28482\\
+    \midrule\midrule\multicolumn{5}{l}{\emph{Normal standard-errors in parentheses}}\\
+    \multicolumn{5}{l}{\emph{Signif. Codes: ***: 0.01, **: 0.05, *: 0.1}}\\
+    \end{tabular}
+\end{table}
 
 \begin{table}
-  \caption{Main Specification, first 6 weeks and second 6 weeks}\ref{tab:sixweeks}
+  \caption{Main Specification, first 6 weeks and second 6 weeks (`Early' effect)}\label{tab:sixweeks}
   \begin{tabular}{lcccccccc}
     \tabularnewline\midrule\midrule
     Dependent Variables:&\multicolumn{2}{c}{home\_devices/devices}&\multicolumn{2}{c}{non\_home\_time}&\multicolumn{2}{c}{home\_devices/devices}&\multicolumn{2}{c}{non\_home\_time}\\
@@ -565,7 +568,40 @@ Another concern is that the link between mobility and sentiment in the early pan
   \end{table}
 
 
-
+  \begin{table}
+    \caption{Main specification, no retweets, winsorising by population}\label{tab:winsor}
+    \begin{tabular}{lcccc}
+      \tabularnewline\midrule\midrule
+      Dependent Variables:&\multicolumn{2}{c}{completely\_home\_device\_count/device\_count}&\multicolumn{2}{c}{median\_non\_home\_dwell\_time}\\
+      Model:&(1) & (2) & (3) & (4)\\
+      \midrule \emph{Variables}&   &   &   &  \\
+      meanneg&0.0902$^{**}$ &    & -43,126.1 &   \\
+        &(0.0303) &    & (24,813.8) &   \\
+      NAT\_StringencyIndex&0.0029$^{***}$ & 0.0029$^{***}$ & -1,113.2$^{***}$ & -1,096.2$^{***}$\\
+        &(0.0003) & (0.0003) & (244.8) & (243.7)\\
+      STA\_StringencyIndex&0.0005$^{**}$ & 0.0005$^{**}$ & -90.75 & -90.62\\
+        &(0.0002) & (0.0002) & (86.75) & (86.77)\\
+      death&$-7.93\times 10^{-5}$$^{**}$ & $-7.97\times 10^{-5}$$^{**}$ & 55.38 & 55.54\\
+        &($2.78\times 10^{-5}$) & ($2.78\times 10^{-5}$) & (32.37) & (32.40)\\
+      confirmed&$9.25\times 10^{-6}$$^{***}$ & $9.28\times 10^{-6}$$^{***}$ & -7.177$^{**}$ & -7.196$^{**}$\\
+        &($2.41\times 10^{-6}$) & ($2.4\times 10^{-6}$) & (2.572) & (2.572)\\
+      meanfear&   & 0.0097$^{**}$ &    & -11,017.1$^{**}$\\
+        &   & (0.0041) &    & (3,671.2)\\
+      \midrule \emph{Fixed-effects}&   &   &   &  \\
+      week & Yes & Yes & Yes & Yes\\
+      FIPS & Yes & Yes & Yes & Yes\\
+      \midrule \emph{Fit statistics}&  & & & \\
+      Observations & 14,339&14,339&14,339&14,339\\
+      Log-Likelihood & 28,197.8&28,185.8&-161,851.1&-161,850.3\\
+      BIC & -51,390.2&-51,366.0&328,707.6&328,706.0\\
+      RMSE & 0.03386&0.03389&19,313.0&19,311.9\\
+      Size of the 'effective' sample & 14,339&14,339&14,339&14,339\\
+      F-test & 178.52&178.17&72.605&72.616\\
+      F-test (projected) & 594.30&588.65&557.09&557.46\\
+      \midrule\midrule\multicolumn{5}{l}{\emph{Two-way (week \& FIPS) standard-errors in parentheses}}\\
+      \multicolumn{5}{l}{\emph{Signif. Codes: ***: 0.01, **: 0.05, *: 0.1}}\\
+      \end{tabular}
+  \end{table}
 
  \begin{table}
   \caption{Individual level, no retweets, meanfear,neg, UIDFIPS}\label{tab:ind-uid}
