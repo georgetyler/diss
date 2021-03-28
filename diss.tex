@@ -219,7 +219,7 @@ Unsupervised models do not begin with labelled data; rather, the model classifie
 
 
 
-\section{Data} %2000-3000 words
+\section{Data}
 \subsection{GeoCoV19 and geolocation inference of Twitter datasets}\label{geocov}
 The primary dataset of tweets I present is a subset of GeoCoV19, a project which collected tweets relating to COVID-19 between February 1 and May 1 2020. The Twitter Streaming API provides a live filter function for a number of keywords and hashtags, and returns all tweets matching any of the search terms. The terms were chosen to cover a broad base of COVID-related talk, including searches for symptoms (e.g.`breathing difficulties'), behaviour (e.g. `\#masks4all'), and popular hashtags (e.g. `\#IStayHome, \#FlattenTheCurve') in addition to central discussion topics like `coronavirus'. The full list of search terms used is in a separate appendix. The dataset was collected with multilingual use in mind, but a majority of the tweets were based in the US; tracking with the fact that the US makes up most of Twitter's user base. In total, 524 million tweets were collected during the time period; during the first three weeks of February this number was lower, reflecting lower general interest, and increasing to around 6.4 million per day during March and April. We filter for tweets that are in English and are geotagged to originate from the United States. 
 \begin{figure}[h!]
@@ -420,7 +420,7 @@ The fixed effects model is characterised by the linear model
 
 \section{Results}%1000 words
 \subsection{Main Specification}
-The basic message of the main specification can be seen in figure \ref{setsplit} in appendix \ref{add-figs}, which shows that counties with a fear sentiment above the median value have 3 percentage points more devices staying at home. Below is the regression table for the main specification as in equation \ref{eq:mainspec}, which reports two sentiment measures: \texttt{fearprop}, the NRC-derived proportion of fearful tweets, and \texttt{negscore}, the VADER-derived negativity score of individual tweets\footnote{\texttt{negscore} reports results as a number between 0 and 1, so the higher the score, the more negative the tweet.}. The two dependent variables are the median minutes spent outside home, and the proportion of devices that do not leave home all day. Models 1 and 2 report the NRC sentiment measure, while 3 and 4 report the VADER sentiment measure; models 1 and 3 report the median minutes mobility measure, while 2 and 4 report the proportion-home measure. In this specification, the sentiment scores are aggregated to the county-day level, as discussed in section \ref{aggregation}. All regression output was computed with the R package \texttt{fixest} \parencite{bergeEfficientEstimationMaximum2018}.
+The basic message of the main specification can be seen in figure \ref{setsplit} in appendix \ref{add-figs}, which shows that counties with a fear sentiment above the median value have 3 percentage points more devices staying at home. Below is the regression table for the main specification as in equation \ref{eq:mainspec}, which reports two sentiment measures: \texttt{fearprop}, the NRC-derived proportion of fearful tweets, and \texttt{negscore}, the VADER-derived negativity score of individual tweets\footnote{\texttt{negscore} reports results as a number between 0 and 1, so the higher the score, the more negative the tweet.}. The two dependent variables are the median minutes spent outside home, and the proportion of devices that do not leave home all day. Models 1 and 2 report the NRC sentiment measure, while 3 and 4 report the VADER sentiment measure; models 1 and 3 report the median minutes mobility measure, while 2 and 4 report the proportion-home measure. In this specification, the sentiment scores are aggregated to the county-day level, as discussed in section \ref{aggregation}; after data trimming, we estimate the model on a balanced panel of 16,474 observations over 597 counties and 14 weeks. All regression output was computed with the R package \texttt{fixest} \parencite{bergeEfficientEstimationMaximum2018}.
 
 \begin{singlespace}
 \centering
@@ -464,10 +464,14 @@ Wald (joint nullity) & 7.7500&130.97&7.5517&136.04\\
   \end{tabular}
 \end{table}
 \end{singlespace}
-We see that in models 2, and 4, the sentiment measure is a significant predictor of mobility at the 10\% level, while in model 1 sentiment is significant at 1 \%. In model 3, the negativity score has a larger standard error, with a corresponding \(p\)-value of 0.148. Since we use OLS fixed effects, the parameters can readily be interpreted: a 100\% proportion of fearful tweets leads to on average 16,667 fewer minutes spent outside in a county each day, and leads to a 0.94 percentage point increase in the proportion of devices staying home during work hours. Similarly, a county exhibiting completely negative tweets corresponds to a 6.5\% reduction in proportion of devices leaving the home. These effect sizes, while relatively small in comarison to the Stringency Index policy variables\footnote{Which are reported on a 0 to 100 scale}, remain significant predictors for key mobility metrics. The effect sizes are small for deaths and cases because the range of the variable is large. Concerningly, however, the cumulative death count in a county appears to have a significant effect corresponding to risk-seeking behaviour, where an additional death corresponds to an increase in minutes spent outside the home and a decrease in share of devices remaining at home. I hypothesise that confirmed cases and deaths measure the same effect, the beliefs updating with the progression of the virus; as such, including it in addition to deaths cancels out the deaths effect. Indeed, dropping the observed cases causes the coefficient sign on deaths to flip and indicate risk-averse behaviour, as it captures the entire effect. This  The \(F\) tests and Wald tests for nullity of the parameters are all highly significant.
+We see that in models 2, and 4, the sentiment measure is a significant predictor of mobility at the 10\% level, while in model 1 sentiment is significant at 1 \%. In model 3, the negativity score has a larger standard error, with a corresponding \(p\)-value of 0.148. Since we use OLS fixed effects, the parameters can readily be interpreted: a 100\% proportion of fearful tweets leads to on average 16,667 fewer minutes spent outside in a county each day, and leads to a 0.94 percentage point increase in the proportion of devices staying home during work hours. Similarly, a county exhibiting completely negative tweets corresponds to a 6.5\% reduction in proportion of devices leaving the home. These effect sizes, while relatively small in comarison to the Stringency Index policy variables\footnote{Which are reported on a 0 to 100 scale.}, remain significant predictors for key mobility metrics. In all cases, increases in policy stringency correspond to decreased mobility, as we expect. The effect sizes are small for deaths and cases because the range of the variable is large. Concerningly, however, the cumulative death count in a county appears to have a significant effect corresponding to risk-seeking behaviour, where an additional death corresponds to an increase in minutes spent outside the home and a decrease in share of devices remaining at home. I hypothesise that confirmed cases and deaths measure the same effect, the beliefs updating with the progression of the virus; as such, including it in addition to deaths cancels out the deaths effect. Indeed, dropping the observed cases causes the coefficient sign on deaths to flip and indicate risk-averse behaviour, as it captures the entire effect. The models explain between 72\% - 85\% of the overall variation, and between 16\% and 19 \% of the variation within county groups over time. The \(F\) tests and Wald tests for nullity of the parameters are all highly significant.
 
 \subsection{Alternative model specifications}\label{alt-specs}
-The variable used for the mobility data, and presented as the dependent variable, is the proportion of the measured devices which stay at home all day. Hence, the variable is continuous and bounded between 0 to 1. Although the primary specification is with ordinary least squares, we may wish to address the problem that OLS can identify values beyond \([0,1]\). This quality of the dependent variable may indicate a logit transformation followed by OLS estimation, a generalised linear model with a binomial link function, or a beta regression. 
+In order to verify the results over different model specifcations, we estimate several different alternative specifications. All use the same fixed-effects OLS estimation procedure, and the regression tables referred to are in appendix \ref{add-figs}. First, the main sentiment measure uses a dataset which omits all `retweets' from a user. This was done in order to more accurately capture the user's own risk preference, as one is be more likely to retweet inflammatory and emotional content than write it oneself. As such, when we estimate a model which uses a sentiment measure that includes retweets, we observe a drop in predictive power of the variable of interest. As in table \ref{tab:ms-rt}, the emotion-based sentiment performs poorly, while the polarity-based sentiment is significant at the 10\% level. Assuming the model is correctly specified, this indicates that the overall polarity is more consistent than emotion between tweets and retweets. This implies that individuals are likely to retweet things that conform to their overall disposition, but with differing levels of emotion. 
+
+Next, the main argument, that sentiment and risk preference varies according to region, turns on the notion of aggregating the sentiment measure from individual tweets to the county-day level. As such, estimating a model with individual tweets as the base unit does not make sense, as the dependent variable is measured at the county, rather than individual, level. However, if user fixed effects are included rather than county fixed effects, inference is possible, since user-level fixed effects also encapsulate all of the time-invariant properties of the county which the user lives in. Indeed, the sentiment measures maintain predictive power with an individual-level, user fixed-effects design: see table \ref{tab:ind-uid}.
+
+Finally, a potential problem is that one mobility variable is the proportion of the measured devices which stay at home all day. This variable is continuous and bounded between 0 and 1. Although the primary specification is with ordinary least squares, we may wish to address the problem that OLS can identify values beyond \([0,1]\). This quality of the dependent variable may indicate a logit transformation followed by OLS estimation, a generalised linear model with a binomial link function, or a beta regression. 
 \subsection{Robustness checks}\label{robust}
 As discussed in section \ref{nrc}, a potentially problematic feature of the tweet data is that the number of tweets observed in a county track with the county population. This is a problem because the aggregation procedure for the sentiment index required a minimum of 30 observations for unbiasedness, so all county/days with tweets lower than this number were dropped. This means that the panel we created for the primary specification is unbalanced, with data missing not at random. This may present a selection effect, since population, the variable causing this selection, may be correlated with the dependent variable of mobility. The selection effect can be ignored if we can show that the variable driving the selection is uncorrelated with the dependent variable \parencite[552]{wooldridgeEconometricAnalysisCross2010}. 
 \begin{figure}[!htb]
@@ -477,8 +481,9 @@ As discussed in section \ref{nrc}, a potentially problematic feature of the twee
   \includegraphics[width=0.6\textwidth]{figs/popvsmobil.png}
   \floatfoot{The vertical lines in the diagram correspond to counties with mobility scores observed at different dates.}
 \end{figure}
-On visual inspection of figure \ref{popvsmobil}, a positive relationship does exist between the proportion staying at home and the county population (meaning that higher-population counties have \textit{decreased} mobility); however, it appears that this is primarily driven by the two large county outliers. These correspond correspond to the highly dense Los Angeles County and Cooke County, Illinois\footnote{i.e., Chicago}. Discounting these highly dense outlier cities, we can tentatively say that mobility is largely independent of county population. As a consequence, an unbalanced panel could be accomodated. The Heckman correction procedure would be another option for obtaining unbiased parameter estimates \parencite{wooldridgeSelectionCorrectionsPanel1995}, as would weighting the samples by population; and the final option is to avoid aggregating the sentiment scores and run the empirical specification on the individual level. That is, the base unit is an individual tweet rather than the county/day. This yields a much larger panel of the individual observations; the results from runnning this analysis with the main specification are discussed below.
+On visual inspection of figure \ref{popvsmobil}, a positive relationship does exist between the proportion staying at home and the county population (meaning that higher-population counties have \textit{decreased} mobility); however, it appears that this is primarily driven by the two large county outliers. These correspond to the highly dense Los Angeles County and Cooke County, Illinois\footnote{i.e., Chicago}. Discounting these highly dense outlier cities, we can tentatively say that mobility is largely independent of county population. As a consequence, an unbalanced panel could be accomodated. The Heckman correction procedure would be another option for obtaining unbiased parameter estimates \parencite{wooldridgeSelectionCorrectionsPanel1995}, as would weighting the samples by population; and the final option is to avoid aggregating the sentiment scores and run the empirical specification on the individual level. That is, the base unit is an individual tweet rather than the county/day. This yields a much larger panel of the individual observations.
 
+Another concern is that the link between mobility and sentiment in the early pandemic could be largely driven by the states where the virus spread first: California, New York, and Washington. Dropping these states from the dataset, we observe that on the main specification three out of four models lose predictive power at the 10\% level, although these three models do have \(p\)-values of between 0.109 and 0.14; this may indicate that states where the virus spread first had both a higher negative sentiment and lower mobility, and that this `early' effect is confounder of the two variables. Investigating this further, we re-include the initial states and estimate a split-sample, where panels 
 
 \section{Discussion and conclusion} %1000 words
 
@@ -489,78 +494,150 @@ On visual inspection of figure \ref{popvsmobil}, a positive relationship does ex
 
 \appendix 
 \section{Regression Tables}
+
+  \begin{table}
+    \caption{Main Specification: Drop CA, NY, WA}
+    \begin{tabular}{lcccc}
+      \tabularnewline\midrule\midrule
+      Dependent Variables:&\multicolumn{2}{c}{completely\_home\_device\_count/device\_count}&\multicolumn{2}{c}{median\_non\_home\_dwell\_time}\\
+      Model:&(1) & (2) & (3) & (4)\\
+      \midrule \emph{Variables}&   &   &   &  \\
+      meanneg&0.0471 &    & -39,649.9 &   \\
+        &(0.0350) &    & (26,418.7) &   \\
+      NAT\_StringencyIndex&0.0028$^{***}$ & 0.0028$^{***}$ & -1,093.9$^{***}$ & -1,078.2$^{***}$\\
+        &(0.0004) & (0.0004) & (214.2) & (213.8)\\
+      STA\_StringencyIndex&0.0004 & 0.0004 & -175.4$^{*}$ & -174.3$^{*}$\\
+        &(0.0002) & (0.0002) & (84.67) & (84.51)\\
+      death&$-5.48\times 10^{-5}$ & $-5.48\times 10^{-5}$ & 172.9$^{**}$ & 172.9$^{**}$\\
+        &($4\times 10^{-5}$) & ($4\times 10^{-5}$) & (78.23) & (78.07)\\
+      confirmed&$9.05\times 10^{-6}$$^{**}$ & $9.05\times 10^{-6}$$^{**}$ & -19.34$^{***}$ & -19.34$^{***}$\\
+        &($3.97\times 10^{-6}$) & ($3.97\times 10^{-6}$) & (5.545) & (5.534)\\
+      meanfear&   & 0.0089 &    & -13,895.0$^{***}$\\
+        &   & (0.0051) &    & (4,567.3)\\
+      \midrule \emph{Fixed-effects}&   &   &   &  \\
+      week & Yes & Yes & Yes & Yes\\
+      FIPS & Yes & Yes & Yes & Yes\\
+      \midrule \emph{Fit statistics}&  & & & \\
+      Observations & 14,248&14,248&14,248&14,248\\
+      Log-Likelihood & 27,279.4&27,277.9&-165,495.9&-165,491.1\\
+      BIC & -49,240.9&-49,238.0&336,309.6&336,299.9\\
+      RMSE & 0.03567&0.03567&26,807.6&26,798.4\\
+      Size of the 'effective' sample & 14,248&14,248&14,248&14,248\\
+      F-test & 143.99&143.95&74.628&74.695\\
+      F-test (projected) & 470.51&469.84&903.78&906.26\\
+      \midrule\midrule\multicolumn{5}{l}{\emph{Two-way (week \& FIPS) standard-errors in parentheses}}\\
+      \multicolumn{5}{l}{\emph{Signif. Codes: ***: 0.01, **: 0.05, *: 0.1}}\\
+      \end{tabular} 
+  \end{table}
 \begin{landscape}
-  
 
 \begin{table}
+  \caption{Main Specification, first 6 weeks and second 6 weeks}\ref{tab:sixweeks}
+  \begin{tabular}{lcccccccc}
+    \tabularnewline\midrule\midrule
+    Dependent Variables:&\multicolumn{2}{c}{home\_devices/devices}&\multicolumn{2}{c}{non\_home\_time}&\multicolumn{2}{c}{home\_devices/devices}&\multicolumn{2}{c}{non\_home\_time}\\
+    Model:&(1) & (2) & (3) & (4) & (5) & (6) & (7) & (8)\\
+    \midrule \emph{Variables}&   &   &   &   &   &   &   &  \\
+    meanneg&0.0800$^{*}$ &    & -93,125.2$^{*}$ &    & 0.1033$^{**}$ &    & -8,463.4$^{**}$ &   \\
+      &(0.0410) &    & (46,126.6) &    & (0.0403) &    & (2,386.6) &   \\
+    NAT\_StringencyIndex&0.0029$^{***}$ & 0.0028$^{***}$ & -1,292.6$^{***}$ & -1,252.3$^{***}$ & 0.0034$^{***}$ & 0.0034$^{***}$ & -753.8$^{***}$ & -753.1$^{***}$\\
+      &(0.0006) & (0.0007) & (194.3) & (205.7) & (0.0001) & (0.0001) & (14.68) & (14.29)\\
+    STA\_StringencyIndex&$-2\times 10^{-5}$ & $-2.34\times 10^{-5}$ & -2.535 & 1.955 & 0.0005$^{**}$ & 0.0005$^{**}$ & -12.69 & -12.69\\
+      &(0.0004) & (0.0005) & (176.5) & (178.8) & (0.0002) & (0.0002) & (27.80) & (27.82)\\
+    death&-0.0027 & -0.0027 & 3,578.2 & 3,611.5 & $-1.53\times 10^{-5}$ & $-1.55\times 10^{-5}$ & 11.14$^{*}$ & 11.16$^{*}$\\
+      &(0.0015) & (0.0015) & (2,159.2) & (2,130.2) & ($8.6\times 10^{-6}$) & ($8.6\times 10^{-6}$) & (5.150) & (5.167)\\
+    confirmed&0.0005$^{**}$ & 0.0005$^{***}$ & -694.8$^{***}$ & -698.4$^{***}$ & $2.53\times 10^{-6}$$^{**}$ & $2.54\times 10^{-6}$$^{**}$ & -1.300$^{**}$ & -1.302$^{**}$\\
+      &(0.0001) & (0.0001) & (185.1) & (183.2) & ($8.19\times 10^{-7}$) & ($8.19\times 10^{-7}$) & (0.5186) & (0.5199)\\
+    meanfear&   & 0.0056 &    & -13,327.2$^{**}$ &    & 0.0067 &    & -1,011.9\\
+      &   & (0.0063) &    & (5,441.5) &    & (0.0052) &    & (899.6)\\
+    \midrule \emph{Fixed-effects}&   &   &   &   &   &   &   &  \\
+    week & Yes & Yes & Yes & Yes & Yes & Yes & Yes & Yes\\
+    FIPS & Yes & Yes & Yes & Yes & Yes & Yes & Yes & Yes\\
+    \midrule \emph{Fit statistics}&  & & & & & & & \\
+    Observations & 4,676&4,676&4,676&4,676&11,798&11,798&11,798&11,798\\
+    R$^2$ & 0.52838&0.52735&0.87499&0.87467&0.84939&0.84897&0.85953&0.85947\\
+    Within R$^2$ & 0.25636&0.25474&0.13004&0.12780&0.11860&0.11611&0.15068&0.15033\\
+    \midrule\midrule
+    \multicolumn{9}{l}{\emph{Models (1-4) first 6 weeks, (5-8) second 6 weeks}}\\
+    \multicolumn{9}{l}{\emph{Two-way (week \& FIPS) standard-errors in parentheses}}\\
+    \multicolumn{9}{l}{\emph{Signif. Codes: ***: 0.01, **: 0.05, *: 0.1}}\\
+    \end{tabular}
+  \end{table}
+
+
+
+
+ \begin{table}
+  \caption{Individual level, no retweets, meanfear,neg, UIDFIPS}\label{tab:ind-uid}
+  \begin{tabular}{lcccc}
+    \tabularnewline\midrule\midrule
+    Dependent Variables:&\multicolumn{2}{c}{completely\_home\_device\_count/device\_count}&\multicolumn{2}{c}{median\_non\_home\_dwell\_time}\\
+    Model:&(1) & (2) & (3) & (4)\\
+    \midrule \emph{Variables}&   &   &   &  \\
+    meanfear&0.0903$^{***}$ &    & -56,954.4$^{***}$ &   \\
+      &(0.0114) &    & (16,497.4) &   \\
+    NAT\_StringencyIndex&0.0014$^{***}$ & 0.0014$^{***}$ & -1,382.6$^{***}$ & -1,347.0$^{***}$\\
+      &(0.0001) & (0.0001) & (254.9) & (247.1)\\
+    STA\_StringencyIndex&0.0015$^{***}$ & 0.0016$^{***}$ & 136.0 & 93.81\\
+      &(0.0002) & (0.0002) & (144.3) & (147.3)\\
+    death&$-4.58\times 10^{-5}$$^{*}$ & $-4.74\times 10^{-5}$$^{**}$ & 155.1$^{***}$ & 156.1$^{***}$\\
+      &($2.45\times 10^{-5}$) & ($2.41\times 10^{-5}$) & (54.66) & (55.20)\\
+    confirmed&$3.45\times 10^{-6}$$^{**}$ & $3.55\times 10^{-6}$$^{**}$ & -14.00$^{***}$ & -14.06$^{***}$\\
+      &($1.59\times 10^{-6}$) & ($1.53\times 10^{-6}$) & (2.980) & (3.024)\\
+    neg&   & 0.0020$^{***}$ &    & -893.3$^{*}$\\
+      &   & (0.0004) &    & (495.5)\\
+    \midrule \emph{Fixed-effects}&   &   &   &  \\
+    user\_id & Yes & Yes & Yes & Yes\\
+    FIPS & Yes & Yes & Yes & Yes\\
+    \midrule \emph{Fit statistics}&  & & & \\
+    Observations & 3,827,258&3,826,961&3,827,258&3,826,961\\
+    Log-Likelihood & 7,891,306.1&7,869,349.1&-45,251,783.4&-45,255,721.8\\
+    BIC & -4,975,095.2&-4,931,478.9&101,311,083.9&101,318,662.8\\
+    RMSE & 0.03078&0.03095&33,011.6&33,075.9\\
+    Size of the 'effective' sample & 3,827,258&3,826,961&3,827,258&3,826,961\\
+    F-test & 32.629&32.217&14.422&14.349\\
+    F-test (projected) & 2,076,756.3&2,046,626.6&523,871.3&519,392.1\\
+    \midrule\midrule\multicolumn{5}{l}{\emph{Two-way (user\_id \& FIPS) standard-errors in parentheses}}\\
+    \multicolumn{5}{l}{\emph{Signif. Codes: ***: 0.01, **: 0.05, *: 0.1}}\\
+    \end{tabular}
+ \end{table} 
+\begin{table}
 \centering
-\caption{Retweets MainSpecs}
-\begin{tabular}{lcccccc}
+\caption{Main Specification, including retweets}\label{tab:ms-rt}
+\begin{tabular}{lcccc}
   \tabularnewline\midrule\midrule
-  Dependent Variables:&home\_count&median\_pct\_time\_home&home\_prop&home\_count&median\_pct\_time\_home&home\_prop\\
-  Model:&(1) & (2) & (3) & (4) & (5) & (6)\\
-  \midrule \emph{Variables}&   &   &   &   &   &  \\
-  meanfear&984.8$^{**}$ & 2,637.5$^{***}$ & 0.0088$^{*}$ &    &    &   \\
-    &(357.5) & (795.0) & (0.0050) &    &    &   \\
-  at\_home\_orderTRUE&704.2$^{**}$ & 1,027.8$^{**}$ & 0.0295$^{***}$ & 705.7$^{**}$ & 1,027.7$^{**}$ & 0.0294$^{***}$\\
-    &(267.5) & (394.6) & (0.0039) & (267.5) & (395.0) & (0.0039)\\
-  NAT\_StringencyIndex&106.6$^{***}$ & 157.0$^{***}$ & 0.0030$^{***}$ & 107.1$^{***}$ & 159.7$^{***}$ & 0.0031$^{***}$\\
-    &(10.68) & (32.68) & (0.0003) & (10.89) & (32.95) & (0.0003)\\
-  death&-11.84$^{**}$ & -19.56$^{**}$ & $-6.61\times 10^{-5}$$^{**}$ & -11.84$^{**}$ & -19.56$^{**}$ & $-6.6\times 10^{-5}$$^{**}$\\
-    &(4.757) & (8.729) & ($2.34\times 10^{-5}$) & (4.760) & (8.745) & ($2.34\times 10^{-5}$)\\
-  confirmed&1.244$^{***}$ & 2.105$^{**}$ & $8.17\times 10^{-6}$$^{***}$ & 1.243$^{***}$ & 2.104$^{**}$ & $8.17\times 10^{-6}$$^{***}$\\
-    &(0.4063) & (0.7757) & ($2.25\times 10^{-6}$) & (0.4067) & (0.7775) & ($2.25\times 10^{-6}$)\\
-  meanneg&   &    &    & 909.7 & 6,199.0 & 0.0603\\
-    &   &    &    & (2,446.3) & (4,331.9) & (0.0345)\\
-  \midrule \emph{Fixed-effects}&   &   &   &   &   &  \\
-  week & Yes & Yes & Yes & Yes & Yes & Yes\\
-  FIPS & Yes & Yes & Yes & Yes & Yes & Yes\\
-  \midrule \emph{Fit statistics}&  & & & & & \\
-  Observations & 16,474&16,474&16,474&16,474&16,474&16,474\\
-  Log-Likelihood & -156,190.6&-161,812.5&31,715.0&-156,194.2&-161,821.8&31,719.5\\
-  BIC & 318,352.5&329,596.4&-57,458.7&318,359.8&329,615.0&-57,467.7\\
-  RMSE & 3,171.9&4,462.0&0.03529&3,172.6&4,464.6&0.03528\\
-  Size of the 'effective' sample & 16,474&16,474&16,474&16,474&16,474&16,474\\
-  F-test & 452.59&1,983.2&160.71&452.38&1,980.9&160.81\\
-  F-test (projected) & 542.16&791.18&710.59&540.51&786.71&712.73\\
-  \midrule\midrule\multicolumn{7}{l}{\emph{Two-way (week \& FIPS) standard-errors in parentheses}}\\
-  \multicolumn{7}{l}{\emph{Signif. Codes: ***: 0.01, **: 0.05, *: 0.1}}\\
+  Dependent Variables:&non\_home\_dwell\_time&home\_devices/devices&non\_home\_dwell\_time&home\_devices/devices\\
+  Model:&(1) & (2) & (3) & (4)\\
+  \midrule \emph{Variables}&   &   &   &  \\
+  meanfear&333.2 & 0.0209 &    &   \\
+    &(3,984.5) & (0.0139) &    &   \\
+    meanneg&   &    & -5,885.2$^{*}$ & 0.0143$^{*}$\\
+    &   &    & (3,215.6) & (0.0071)\\
+  NAT\_StringencyIndex&-561.6$^{***}$ & 0.0029$^{***}$ & -567.3$^{***}$ & 0.0029$^{***}$\\
+    &(109.5) & (0.0003) & (111.6) & (0.0003)\\
+  STA\_StringencyIndex&-134.6$^{**}$ & 0.0003 & -136.0$^{**}$ & 0.0003\\
+    &(61.23) & (0.0002) & (61.77) & (0.0002)\\
+  death&127.7$^{**}$ & -0.0001$^{**}$ & 127.2$^{**}$ & -0.0001$^{**}$\\
+    &(52.45) & ($3.44\times 10^{-5}$) & (52.37) & ($3.41\times 10^{-5}$)\\
+  confirmed&-14.34$^{***}$ & $1.22\times 10^{-5}$$^{***}$ & -14.29$^{***}$ & $1.21\times 10^{-5}$$^{***}$\\
+    &(4.565) & ($3.09\times 10^{-6}$) & (4.559) & ($3.06\times 10^{-6}$)\\
+  
+  \midrule \emph{Fixed-effects}&   &   &   &  \\
+  week & Yes & Yes & Yes & Yes\\
+  FIPS & Yes & Yes & Yes & Yes\\
+  \midrule \emph{Fit statistics}&  & & & \\
+  Observations & 43,258&43,258&42,683&42,683\\
+  Log-Likelihood & -493,421.0&79,625.0&-487,071.3&78,687.3\\
+  BIC & 996,887.1&-149,204.9&984,068.4&-147,448.6\\
+  RMSE & 21,753.5&0.03840&21,860.3&0.03829\\
+  Size of the 'effective' sample & 43,258&43,258&42,683&42,683\\
+  F-test & 109.43&198.68&109.40&199.60\\
+  F-test (projected) & 2,094.9&1,525.4&2,062.4&1,504.3\\
+  \midrule\midrule\multicolumn{5}{l}{\emph{Two-way (week \& FIPS) standard-errors in parentheses}}\\
+  \multicolumn{5}{l}{\emph{Signif. Codes: ***: 0.01, **: 0.05, *: 0.1}}\\
   \end{tabular}
 \end{table}
-\begin{table}
-  \caption{RT MSpecs}
-  \begin{tabular}{lcccccc}
-    \tabularnewline\midrule\midrule
-    Dependent Variables:&CHome\_count&Med\_pct\_timehome&AHome\_prop&CHome\_count&Med\_pct\_timehome&AHome\_prop\\
-    Model:&(1) & (2) & (3) & (4) & (5) & (6)\\
-    \midrule \emph{Variables}&   &   &   &   &   &  \\
-    meanfear&428.4 & -8.585 & 0.0198 &    &    &   \\
-      &(339.6) & (588.2) & (0.0138) &    &    &   \\
-    at\_home\_orderTRUE&674.0$^{***}$ & 1,015.5$^{***}$ & 0.0300$^{***}$ & 674.0$^{***}$ & 1,012.4$^{***}$ & 0.0302$^{***}$\\
-      &(171.0) & (264.8) & (0.0024) & (171.7) & (265.6) & (0.0024)\\
-    NAT\_StringencyIndex&53.03$^{***}$ & 77.73$^{***}$ & 0.0030$^{***}$ & 53.66$^{***}$ & 78.51$^{***}$ & 0.0030$^{***}$\\
-      &(4.850) & (13.09) & (0.0003) & (4.659) & (13.45) & (0.0003)\\
-    death&-13.19$^{**}$ & -20.89$^{**}$ & $-9.74\times 10^{-5}$$^{**}$ & -13.15$^{**}$ & -20.82$^{**}$ & $-9.65\times 10^{-5}$$^{**}$\\
-      &(5.411) & (8.933) & ($3.28\times 10^{-5}$) & (5.399) & (8.921) & ($3.25\times 10^{-5}$)\\
-    confirmed&1.427$^{***}$ & 2.326$^{**}$ & $1.19\times 10^{-5}$$^{***}$ & 1.422$^{***}$ & 2.318$^{**}$ & $1.18\times 10^{-5}$$^{***}$\\
-      &(0.4540) & (0.7735) & ($2.96\times 10^{-6}$) & (0.4530) & (0.7725) & ($2.94\times 10^{-6}$)\\
-    meanneg&   &    &    & 170.0 & 810.3$^{*}$ & 0.0140$^{*}$\\
-      &   &    &    & (268.5) & (405.4) & (0.0070)\\
-    \midrule \emph{Fixed-effects}&   &   &   &   &   &  \\
-    week & Yes & Yes & Yes & Yes & Yes & Yes\\
-    FIPS & Yes & Yes & Yes & Yes & Yes & Yes\\
-    \midrule \emph{Fit statistics}&  & & & & & \\
-    Observations & 43,258&43,258&43,258&42,683&42,683&42,683\\
-    Log-Likelihood & -397,854.6&-412,350.3&80,178.7&-392,778.1&-407,075.7&79,241.9\\
-    BIC & 805,754.2&834,745.8&-150,312.2&795,482.1&824,077.3&-148,557.9\\
-    RMSE & 2,388.2&3,338.9&0.03791&2,400.1&3,355.1&0.03780\\
-    Size of the 'effective' sample & 43,258&43,258&43,258&42,683&42,683&42,683\\
-    F-test & 740.76&3,338.8&205.00&738.68&3,331.3&206.04\\
-    F-test (projected) & 1,634.0&2,293.2&1,784.4&1,605.1&2,256.2&1,763.8\\
-    \midrule\midrule\multicolumn{7}{l}{\emph{Two-way (week \& FIPS) standard-errors in parentheses}}\\
-    \multicolumn{7}{l}{\emph{Signif. Codes: ***: 0.01, **: 0.05, *: 0.1}}\\
-    \end{tabular}
-\end{table}
+
 \end{landscape}
 \section{Additional Figures} \label{add-figs}
 \begin{figure}[h!]
