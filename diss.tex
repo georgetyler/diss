@@ -55,11 +55,12 @@
 \usepackage{setspace}
 \usepackage{booktabs}
 \usepackage{lscape}
+\setcounter{tocdepth}{2}
 \doublespacing
 \newcommand\wordcount{\verbatiminput{\jobname.sum}}
 
 
-\author{George Tyler}
+\author{Z0983692\thanks{I thank my advisor, Angel Hernando-Veciana, for his upbeat encouragement and his interest in my research project. I thank my family for their unwavering support (both on FaceTime and in person), and finally I thank my dog Truffle for her excellent research assistance and willingness to take lunchtime walks.}}
 \date{\today}
 
 \addbibresource{diss.bib}
@@ -69,18 +70,27 @@
 
 \maketitle
 
-\abstract{Does social media predict risk-taking behaviour? I investigate this question in the context of COVID-19 by exploiting a large panel of tweets. Using inferred and explicit geolocation data embedded in the tweets, I study the extent to which public expressions of sentiment influence social distancing, as measured by GPS-located smartphone data. Using a two-way fixed-effects design over two different methods of measuring sentiment, I find a fair amount of consistent evidence for a correlation between sentiment and community mobility. Implications and areas for further research are discussed. The dissertation also contains an primer of text analysis in economics.}
+\abstract{How much does public sentiment affect social distancing? I investigate this question by exploiting a very large panel of tweets. Using geolocation data embedded in the tweets, I create an index of public sentiment towards COVID-19 at the county level, and use this index to estimate the extent to which local sentiment influences social distancing. Using a two-way fixed-effects design over two separate measures of public sentiment and two separate measures of social distancing, I find consistent evidence that an increase in negative or fearful sentiment about COVID-19 decreases the level of community mobility.}
 \wordcount
+
+
+\newpage
 
 \tableofcontents
 
 \section{Introduction}
 \subsection{Overview}\label{overview}
-The early stages of the COVID-19 pandemic saw an unprecedented shift in behaviour for most citizens of the United States. In a short period of time, a large number changed their habits of working, socialising, and travelling. They did so both as a result of government restrictions in the form of non-pharmaceutical interventions (NPIs) and as a private response to the spread of the pandemic. Economists have taken interest in how citizens formed these behaviour changes, and the role that beliefs and risk attitudes played in determining the response to public policy. A new way to measure belief formation and public sentiment is with social media, an increasingly common platform for expression of opinion. It is plausible that those who express more risk-averse sentiment towards COVID online will be inclined to respond in a stricter fashion to social distancing and other public health regulations. In this dissertation, I study the impact of local expressions of risk attitude on public behaviour in the early months of the pandemic. Specifically, I study whether a measure of risk-averse sentiment on Twitter is linked to increased social distancing behaviour at the county/week level. 
+The early stages of the COVID-19 pandemic saw an unprecedented shift in behaviour for most citizens of the United States. In a short period of time, a large number changed their habits of working, socialising, and travelling. Economists have taken interest in how citizens formed these behaviour changes, and the role that beliefs and risk attitudes played in determining the response to public policy.
+
+
+
+
+
+A new way to measure belief formation and public sentiment is with social media, an increasingly common platform for expression of opinion. It is plausible that those who express more risk-averse sentiment towards COVID online will be inclined to respond in a stricter fashion to social distancing and other public health regulations. In this dissertation, I study the impact of local expressions of risk attitude on public behaviour in the early months of the pandemic. Specifically, I study whether a measure of risk-averse sentiment on Twitter is linked to increased social distancing behaviour at the county/week level. 
 
 This dissertation contributes to two strands of the recent economics literature on the COVID-19 pandemic. First, it investigates the relationship between mobility and risk preferences. Previous research papers have shown that individual decisions drove social distancing, rather than policies; I contend that risk preference is important in determining mobility, and moreover that \textit{local} risk preference has a separate and important impact on social distancing. More broadly, the paper investigates the relationship between risk preference and economic behaviour, and presents a novel example of economic inference from social media using text analysis. In essence, the disseration seeks to establish a correlation between an index of local sentiment towards COVID-19 and the level of social distancing in that area.
 
-A key vector for expressing sentiment is social media, with Twitter and Facebook's suite of products\footnote{Facebook, Facebook Messenger, Instagram, and WhatsApp} being the most widely-adopted, each platform having over 80 million monthly active users in the US. A survey by the Pew Research Foundation indicates that 22\% of US adults use Twitter, with 42\% of these using it on a daily basis \parencite{perrinShareAdultsUsing2019}. On Twitter, users can share their own text, with the option to link to a website; alternatively, they can `retweet' another user's text or link. Users can also use `hashtags' in their tweet, which connects their tweet to a particular topic. If the user has allowed it, Twitter also records the location of the tweet; and it is also possible for the user to set their location on their profile. In this way, it is possible to create a panel of geographically-located tweets about a particular topic. 
+A key vector for expressing sentiment is social media, with Twitter having over 80 million monthly active users in the US; 22\% of US adults use Twitter, with 42\% of these using it on a daily basis \parencite{perrinShareAdultsUsing2019}. 
 
 I exploit GeoCov19 \parencite{qaziGeoCoV19DatasetHundreds2020a}, a dataset of 524 million geolocated tweets, to measure the local public sentiment on COVID in the US. The tweets cover the period from 1st February to 1st May, the period I focus on. The particular subset of the data I use contains 33.36 million tweets in total; a small subset are exactly geolocated (the user has provided a GPS location), while most are inferred from the location tab in the user's profile. The tweets were collected using the Twitter Streaming API, querying for tweets containing any of a list of 800 COVID-related keywords. I also use anonymous smartphone location data, collected by the company SafeGraph, as a measure of the extent of social distancing in an area. I present two measures of social distancing at county level: first, the median minutes spent at home during 8am-6pm; second, the proportion of measured devices that stayed at home all day \parencite{safegraphinc.SocialDistancingMetrics2020}. Demographic controls are also acquired and presented from the American Community Survey and the 2010 US census. 
 
@@ -215,11 +225,55 @@ Recently, machine learning methods have seen an expansion in the academic econom
 
 Unsupervised models do not begin with labelled data; rather, the model classifies documents into categories according to prior assumptions about the characteristics of the latent variable. Instead of treating the document term matrix as \textit{a priori} observational data, this approach sees terms as the output of a latent generative process, using a model of \(p(\mathbf{c}_i|\mathbf{v}_i)\). The model therefore infers abstract latent variables, such as `topics', from the text. Economists have used topic modelling to measure the impact of greater transparency on the content of Federal Open Market Committee statements \parencite{hansenTransparencyDeliberationFOMC2018}.
 
+\section{Theoretical and Empirical Framework}\label{methods}
+\begin{figure}[!htb]
+  \centering
+  \caption{Overview of data collection, processing, and estimation.}\label{process}
+  \includegraphics[width=0.9\textwidth]{figs/processing.png}
+\end{figure}
+\subsection{Central Argument and Empirical Specficiation}
+%Previous research has established several important factors in predicting mobility in response to health risks: in addition to policy orders, demographic variables like individual susceptibility, political affiliation, and the progression of disease, characteristics like risk preference have been identified as key determinants of social distancing.
+In this dissertation, the causal relationship of interest is the impact of public sentiment on social distancing. Suppose that risk preferences vary by time and region, a notion backed up by the Global Preferences Survey \parencite{falkGlobalEvidenceEconomic2018} and applied to the COVID-19 pandemic by \textcite{fanHeterogeneousActionsBeliefs2020}. Suppose further that a portion of individual-level risk preferences is time variant and dependent on external factors.   and that this `attitude' is expressed by what that individual says on social media. Those with risk-averse attitudes will post more negatively about COVID-19. The location of these users indicates a level of risk preference that is shared among those in the local area. With a sufficiently large dataset of tweets about COVID-19, This is because complex combinations of local factors -- factors such as the trust in that particular area's local government, the pattern of supply shortages in that area's supermarket, the quality of public transport, and the commuting practises of the area -- all contribute to a shared local perception of pandemic risk. I assert, then, that this shared perception is measured by the local chatter on social media, and I measure it by creating a county-level daily index of social media sentiment towards COVID-19. In this framework, individual-level observations of attitude combine to create a public sentiment index. We are interested in the relationship between this county index and the level of social distancing that an area practises.
+
+To that end, I estimate the following specification, where a vector of social distancing metrics in county \(c\) of state \(s\), on date \(t\) and week \(w\) is a function of
+
+\begin{equation}
+  \label{eq:mainspec}
+  SD_{ct} = \beta_1 Sent_{ct} + \beta_2 TweetCount_{ct} + \beta_3 StateStringency_{st} + \beta_4 NatStringency_{t} + \beta_5 Deaths_{ct} + \gamma_c + \delta_w
+\end{equation}. The sentiment effect is captured by \(\beta_1\) and \(\beta_2\), policy effects by \(\beta_3\) and \(\beta_4\), and local health risk and disease spread by \(\beta_5\). This primary specification captures the local effects of sentiment, as discussed above; in order to account for the Februrary selection effect discussed in section \ref{geocov}, where far lower COVID tweets observed in Februrary could indicate only those fearful of the virus tweeting about it, we include the number of tweets observed in the county on that week as a covariate. Including this possible confounder in the regression allows for the effect of low observations to be separated from the true effect of tweet sentiment. As such, our primary hypothesis has the first and second coefficients as the effect of interest such that
+
+\begin{align*}
+  H_0 : &\: \beta_1 = \beta_2 = 0 \\
+  H_1 : &\: \beta_1 \neq \beta_2 \neq 0
+\end{align*}, where \(\beta_1\) has the appropriate sign according to its metric, \(\beta_2 > 0\), and the coefficients are jointly and individually significant.
+
+
+The third, fourth, and fifth coefficients cover time-varying factors like the imposition of policy orders and the spread of the virus. \(\beta_5\) represents not only viral spread, but can act as a proxy for perceived local health risk: this follows \textcite{chernozhukovCausalImpactMasks2021}, in whose model COVID death counts represent the time-varying local and national beliefs on the seriousness of the pandemic. It is important to note that a central identifying assumption in the two-way fixed effects design is that there is no source of time-varying, unobserved heterogeneity: thus it is important to verify that the correct specification is chosen for these time-varying confounders. Finally, \(\gamma_c\) is a vector of county-level fixed effects, capturing all constant demographic variables like percent above 65, income, commuting patterns, etc.; \(\delta_w\) is a vector of week fixed effects, capturing among others the national-level disease spread and health risk perception. All regressions have two-way White heteroscedasticity-robust standard errors, clustered at the county and week level.
+
+
+\subsubsection{Variables}
+We have estimated two measures of tweet sentiment. Both of the measures estimate the sentiment of individual tweets, \(\hat{\mathbf{V}}\), from the raw text \(\mathbf{C}\). For the NRC lexicon, this is a binary measure: `tweet contains fear-related words' is true or false. For each county in each day, a proportion of the tweets contain fear-related words. This proportion is the reported variable. Similarly, the VADER measure is a bounded index over \([-1,1]\), but does not arise directly from count data. The mean of this measure is taken over each county and day, which forms the aggregation procedure. AtHome is an indicator variable for whether the state had imposed a stay-at-home order; and NatStringency reports the the Oxford stringency index, which is normalised to between 0 and 100. Finally, the deaths in each county are included as a time-varying factor; as discussed above, these offer a less biased estimate of the spread of the virus than reported cases, which vary by region and do not include asymptomatic cases. The dependent variables are two mobility measures: the median time spent at home during working hours (expressed as a percentage), and the proportion of measured devices that stay at home all day.
+
+\subsection{Inference with Panel Fixed Effects}
+The chosen model is a two-way, time and location fixed effects design. This empirical model is very common with a panel dataset measured at the county level, as the location fixed effect flexibly controls for all unobserved, time-invariant factors in each county. Moreover, the time fixed effect accounts for time-varying factors that are common to all counties -- like the progression of the virus on the world stage, and the level of `shared' sentiment towards COVID across the U.S. 
+
+The fixed effects model is characterised by the linear model  
+\begin{equation}
+  E[Y_{it} | A_i , X_{it}, t] = \alpha + \lambda_t + A^\prime_i \gamma + X^\prime_{it} \beta + \rho D_{it}
+\end{equation}
+, where \(Y_{it}\) is the outcome, \(\alpha\) the intercept, \(\lambda_t\) the time effect, \(A^\prime_i \gamma\) unobserved, fixed confounders, \(X^\prime_{it} \beta\) observed time-varying confounders, and \(\rho D_{it}\) the variable of interest \parencite[222]{angristMostlyHarmlessEconometrics2009a}. The assumptions are that the effect of \(\rho\) is additive and constant, and that the unobserved fixed effects do not vary with time\footnote{That is, the omission of a time subscript on \(A^\prime_i \gamma\) is accurate.}. In our case, both assumptions are plausible. This directly implies the model 
+\begin{align}
+  Y_{it} &= \alpha_i + \lambda_t + \rho D_{it} + X^\prime_{it} \beta + \epsilon_{it}, \textrm{, where} \\
+  \alpha_i &\equiv \alpha + A_i^\prime \gamma
+\end{align}. In this way we estimate the (potentially large number of) unobserved confounders as the \textit{fixed effect} \(\alpha_i\), which enters into the model as a coefficient on an indicator for each region, and also include a \textit{time effect} \(\lambda_t\). With these effects accounted for, we are able to obtain a consistent estimator for the overall, shared effect of our variable of interest, under the assumption that the time-varying confounders are adequately specified. Note that this dissertation does not aim for a causal identification, but focuses on investigating the extent to which the social distancing and social sentiment are correlated. This is because in order to establish causality in a fixed effects design we must establish strict exogeneity of social media sentiment and social distancing. In particular, there should be plausibly no simultaneity or reverse causality: mobility cannot affect social media sentiment, and the two should not be jointly determined. Although we address this by controlling for the time-varying confounders of these two variables, we cannot do so to the extent that we conclude that sentiment causes social distancing; and the time-varying covariates of cases and deaths data are clearly endogenous with the level of mobility. In this case, therefore, a causal design is not feasible, and the objective of this research design is to establish a plausible correlation between sentiment and social distancing.
+%Maybe comment on measurement error here, too.
 
 
 \section{Data}
 \subsection{GeoCoV19 and geolocation inference of Twitter datasets}\label{geocov}
-The primary dataset of tweets I present is a subset of GeoCoV19, a project which collected tweets relating to COVID-19 between February 1 and May 1 2020. The Twitter Streaming API provides a live filter function for a number of keywords and hashtags, and returns all tweets matching any of the search terms. The terms were chosen to cover a broad base of COVID-related talk, including searches for symptoms (e.g.`breathing difficulties'), behaviour (e.g. `\#masks4all'), and popular hashtags (e.g. `\#IStayHome, \#FlattenTheCurve') in addition to central discussion topics like `coronavirus'. The full list of search terms used is in a separate appendix. The dataset was collected with multilingual use in mind, but a majority of the tweets were based in the US; tracking with the fact that the US makes up most of Twitter's user base. In total, 524 million tweets were collected during the time period; during the first three weeks of February this number was lower, reflecting lower general interest, and increasing to around 6.4 million per day during March and April. We filter for tweets that are in English and are geotagged to originate from the United States. 
+People use Twitter to share text, images, and links to websites, often using hashtags to link their tweets to topics. The retweet function enables them to copy another user's tweet to their profile and share it with their followers. If the user has allowed it, Twitter also records the location of the tweet; and it is also possible for the user to set their location on their profile. In this way, it is possible to create a panel of geographically-located tweets about a particular topic. 
+
+The primary dataset of tweets I present is a subset of GeoCoV19, a project which collected tweets relating to COVID-19 between February 1 and May 1 2020. The Twitter Streaming API provides a live filter function for a number of keywords and hashtags, and returns all tweets matching any of the search terms. The terms were chosen to cover a broad base of COVID-related talk, including searches for symptoms (e.g.`breathing difficulties'), behaviour (e.g. `\#masks4all'), and popular hashtags (e.g. `\#IStayHome, \#FlattenTheCurve') in addition to central discussion topics like `coronavirus'. The full list of search terms used is listed at \texttt{https://crisisnlp.qcri.org/covid19}. The dataset was collected with multilingual use in mind, but a majority of the tweets were based in the US; tracking with the fact that the US makes up most of Twitter's user base. In total, 524 million tweets were collected during the time period; during the first three weeks of February this number was lower, reflecting lower general interest, and increasing to around 6.4 million per day during March and April. We filter for tweets that are in English and are geotagged to originate from the United States. 
 \begin{figure}[h!]
     \includegraphics[width=0.8\textwidth]{figs/GeoCov-countrydistribution.png}    
     \centering
@@ -374,47 +428,6 @@ The aggregation procedure for the VADER package is broadly similar to the NRC le
 \end{singlespace}
 The primary dependent variable is `\% devices at home'; that is, the proportion of devices on a given county-day which stay completely at home. It has a mean of 37\%; as expected, it is strongly correlated with time. . Tweets per week and device count have a very large range, since these track with county population (which is very variable, unlike voting districts: Los Angeles county has 10 million residents, for example). However both variables show little per capita variation, pointing to consistent sampling across the whole of the US: in this way, sampling bias on these variables is unlikely. Deaths and cases are path-dependent, as New York City, California, and Seattle acquired serious outbreaks earlier than other areas. Data is reported for all 3,142 counties over the 90 days between February 1 and May 1 2020. 
 
-\section{Methods}\label{methods}
-\begin{figure}[!htb]
-  \centering
-  \caption{Overview of data collection, processing, and estimation.}\label{process}
-  \includegraphics[width=0.9\textwidth]{figs/processing.png}
-\end{figure}
-\subsection{Central Argument and Empirical Specficiation}
-The primary aim of this dissertation is to investigate whether there is a link between individual risk preferences and social distancing. Previous research has established several important factors in predicting mobility in response to health risks: in addition to policy orders, demographic variables like individual susceptibility, political affiliation, and the progression of disease, characteristics like risk preference have been identified as key determinants of social distancing. The argument of the dissertation turns on the asssertion that risk preferences vary by region, a notion backed up by the influential Global Preferences Survey \parencite{falkGlobalEvidenceEconomic2018} and applied to the COVID-19 pandemic by \textcite{fanHeterogeneousActionsBeliefs2020}. I assert that this risk preference can, to some extent, be measured by a novel data source: what people say on social media. Using a very large dataset of tweets which mention COVID-19, I argue that those who are risk averse will post more negatively about COVID-19; furthermore, the location of these users indicates a level of risk preference that is shared among those in the local area. This is because complex combinations of local factors -- factors such as the trust in that particular area's local government, the pattern of supply shortages in that area's supermarket, the quality of public transport, and the commuting practises of the area -- all contribute to a shared local perception of pandemic risk. I assert, then, that this shared perception is measured by the local chatter on social media, and I measure it by creating a county-level index of social media sentiment towards COVID-19. We are interested in whether this county index is able significantly to predict the level of social distancing that an area practises.
-
-To that end, I estimate the following specification, where a vector of social distancing metrics in county \(c\) of state \(s\), on date \(t\) and week \(w\) is a function of
-
-\begin{equation}
-  \label{eq:mainspec}
-  SD_{ct} = \beta_1 Sent_{ct} + \beta_2 TweetCount_{ct} + \beta_3 StateStringency_{st} + \beta_4 NatStringency_{t} + \beta_5 Deaths_{ct} + \gamma_c + \delta_w
-\end{equation}. The sentiment effect is captured by \(\beta_1\) and \(\beta_2\), policy effects by \(\beta_3\) and \(\beta_4\), and local health risk and disease spread by \(\beta_5\). This primary specification captures the local effects of sentiment, as discussed above; in order to account for the Februrary selection effect discussed in section \ref{geocov}, where far lower COVID tweets observed in Februrary could indicate only those fearful of the virus tweeting about it, we include the number of tweets observed in the county on that week as a covariate. Including this possible confounder in the regression allows for the effect of low observations to be separated from the true effect of tweet sentiment. As such, our primary hypothesis has the first and second coefficients as the effect of interest such that
-
-\begin{align*}
-  H_0 : &\: \beta_1 = \beta_2 = 0 \\
-  H_1 : &\: \beta_1 \neq \beta_2 \neq 0
-\end{align*}, where \(\beta_1\) has the appropriate sign according to its metric, \(\beta_2 > 0\), and the coefficients are jointly and individually significant.
-
-
-The third, fourth, and fifth coefficients cover time-varying factors like the imposition of policy orders and the spread of the virus. \(\beta_5\) represents not only viral spread, but can act as a proxy for perceived local health risk: this follows \textcite{chernozhukovCausalImpactMasks2021}, in whose model COVID death counts represent the time-varying local and national beliefs on the seriousness of the pandemic. It is important to note that a central identifying assumption in the two-way fixed effects design is that there is no source of time-varying, unobserved heterogeneity: thus it is important to verify that the correct specification is chosen for these time-varying confounders. Finally, \(\gamma_c\) is a vector of county-level fixed effects, capturing all constant demographic variables like percent above 65, income, commuting patterns, etc.; \(\delta_w\) is a vector of week fixed effects, capturing among others the national-level disease spread and health risk perception. All regressions have two-way White heteroscedasticity-robust standard errors, clustered at the county and week level.
-
-
-\subsubsection{Variables}
-We have estimated two measures of tweet sentiment. Both of the measures estimate the sentiment of individual tweets, \(\hat{\mathbf{V}}\), from the raw text \(\mathbf{C}\). For the NRC lexicon, this is a binary measure: `tweet contains fear-related words' is true or false. For each county in each day, a proportion of the tweets contain fear-related words. This proportion is the reported variable. Similarly, the VADER measure is a bounded index over \([-1,1]\), but does not arise directly from count data. The mean of this measure is taken over each county and day, which forms the aggregation procedure. AtHome is an indicator variable for whether the state had imposed a stay-at-home order; and NatStringency reports the the Oxford stringency index, which is normalised to between 0 and 100. Finally, the deaths in each county are included as a time-varying factor; as discussed above, these offer a less biased estimate of the spread of the virus than reported cases, which vary by region and do not include asymptomatic cases. The dependent variables are two mobility measures: the median time spent at home during working hours (expressed as a percentage), and the proportion of measured devices that stay at home all day.
-
-\subsection{Inference with Panel Fixed Effects}
-The chosen model is a two-way, time and location fixed effects design. This empirical model is very common with a panel dataset measured at the county level, as the location fixed effect flexibly controls for all unobserved, time-invariant factors in each county. Moreover, the time fixed effect accounts for time-varying factors that are common to all counties -- like the progression of the virus on the world stage, and the level of `shared' sentiment towards COVID across the U.S. 
-
-The fixed effects model is characterised by the linear model  
-\begin{equation}
-  E[Y_{it} | A_i , X_{it}, t] = \alpha + \lambda_t + A^\prime_i \gamma + X^\prime_{it} \beta + \rho D_{it}
-\end{equation}
-, where \(Y_{it}\) is the outcome, \(\alpha\) the intercept, \(\lambda_t\) the time effect, \(A^\prime_i \gamma\) unobserved, fixed confounders, \(X^\prime_{it} \beta\) observed time-varying confounders, and \(\rho D_{it}\) the variable of interest \parencite[222]{angristMostlyHarmlessEconometrics2009a}. The assumptions are that the effect of \(\rho\) is additive and constant, and that the unobserved fixed effects do not vary with time\footnote{That is, the omission of a time subscript on \(A^\prime_i \gamma\) is accurate.}. In our case, both assumptions are plausible. This directly implies the model 
-\begin{align}
-  Y_{it} &= \alpha_i + \lambda_t + \rho D_{it} + X^\prime_{it} \beta + \epsilon_{it}, \textrm{, where} \\
-  \alpha_i &\equiv \alpha + A_i^\prime \gamma
-\end{align}. In this way we estimate the (potentially large number of) unobserved confounders as the \textit{fixed effect} \(\alpha_i\), which enters into the model as a coefficient on an indicator for each region, and also include a \textit{time effect} \(\lambda_t\). With these effects accounted for, we are able to obtain a consistent estimator for the overall, shared effect of our variable of interest, under the assumption that the time-varying confounders are adequately specified. Note that this dissertation does not aim for a causal identification, but focuses on investigating the extent to which the social distancing and social sentiment are correlated. This is because in order to establish causality in a fixed effects design we must establish strict exogeneity of social media sentiment and social distancing. In particular, there should be plausibly no simultaneity or reverse causality: mobility cannot affect social media sentiment, and the two should not be jointly determined. Although we address this by controlling for the time-varying confounders of these two variables, we cannot do so to the extent that we conclude that sentiment causes social distancing; and the time-varying covariates of cases and deaths data are clearly endogenous with the level of mobility. In this case, therefore, a causal design is not feasible, and the objective of this research design is to establish a plausible correlation between sentiment and social distancing.
-%Maybe comment on measurement error here, too.
 
 \section{Results}%1000 words
 \subsection{Main Specification}
@@ -721,5 +734,6 @@ It is important to understand the implications of this result. The key source of
     \caption{Example sentiment analysis output of VADER package.}
   \end{figure}
   \end{landscape}
+
 %TC:endignore
 \end{document}
